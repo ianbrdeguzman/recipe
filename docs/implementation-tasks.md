@@ -56,9 +56,14 @@ Create the application foundation so all later work has a stable structure.
   - pages/routes
   - components
   - server utilities
-  - database/drizzle
+  - database under `src/lib/db`
   - validation schemas
 - Add a shared layout with navigation.
+
+#### Current status
+- In progress / partially complete.
+- `src/components/` and `src/lib/` now exist.
+- Database code has been moved from `src/drizzle/` to `src/lib/db/`.
 
 #### Suggested deliverables
 - A working app that runs locally.
@@ -96,7 +101,7 @@ Add environment configuration:
 - Define `DATABASE_URL` in `.env`
 - Example: `postgresql://...`
 
-Create a schema file such as `drizzle/schema.ts` for table definitions.
+Create a schema file such as `src/lib/db/schema.ts` for table definitions.
 
 Create a database client module that:
 - imports `drizzle` from `drizzle-orm/postgres-js`
@@ -148,6 +153,14 @@ Implement at least these models based on the architecture:
 - The app can connect to the database locally using `DATABASE_URL`.
 - The database client is configured correctly for the chosen Postgres host/pool mode.
 
+#### Current status
+- Partially complete.
+- `drizzle-orm`, `drizzle-kit`, and `postgres` are installed.
+- `drizzle.config.ts` now points to `src/lib/db/schema.ts` and outputs under `src/lib/db`.
+- `src/lib/db/index.ts` creates the Postgres client with `prepare: false`.
+- Better Auth tables have been added to the Drizzle schema.
+- A temporary `test` table still exists and should be replaced or removed when recipe tables are introduced.
+
 ---
 
 ### Task 1.3: Implement authentication with Better Auth and Google OAuth
@@ -191,6 +204,16 @@ Create a sign-in page or entry point that includes:
 - Protected routes redirect unauthenticated users.
 - No password hashes are stored in the database.
 
+#### Current status
+- Mostly complete for the base auth flow.
+- Better Auth is configured in `src/lib/auth/index.ts` with the Drizzle adapter and Google as the social provider.
+- The auth route handler exists at `src/app/api/auth/[...all]/route.ts`.
+- The client helper exists at `src/lib/auth/client.ts`.
+- `src/components/signin-button.tsx` and `src/components/signout-button.tsx` are implemented.
+- Sign-out refreshes the current route so server-rendered session state updates.
+- Sign-in and sign-out both have basic loading states.
+- Route protection for future recipe pages is still pending.
+
 ---
 
 ### Task 1.4: Add authenticated app shell and navigation
@@ -218,6 +241,11 @@ Make the main app usable once a user is logged in.
 - Navigation is visible and functional.
 - Auth state is reflected correctly in the layout.
 - Main app pages are reachable after sign-in.
+
+#### Current status
+- Not complete.
+- Auth state is currently being inspected directly on `src/app/page.tsx` as a temporary debug page.
+- A shared authenticated layout and navigation still need to be added.
 
 ---
 
@@ -890,6 +918,12 @@ Review all major flows and improve error copy for:
 ---
 
 ### Task 3.2: Add loading states to major async actions
+
+#### Current status
+- Partially complete already.
+- Google sign-in action has a loading state in `src/components/signin-button.tsx`.
+- Sign-out action has a loading state in `src/components/signout-button.tsx`.
+- Loading states for recipe create/edit/delete/import are still pending.
 
 #### Objective
 Make the UI feel responsive and prevent duplicate actions.

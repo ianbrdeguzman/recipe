@@ -42,14 +42,29 @@ A single web app with simple pages:
 - Edit recipe
 - Import from URL
 
+Current implementation notes:
+- The app uses the Next.js App Router.
+- The current homepage (`src/app/page.tsx`) is acting as a temporary auth smoke test page.
+- Sign-in and sign-out are handled by client components in `src/components/`.
+- Server-rendered session state is read in Server Components with `auth.api.getSession({ headers: await headers() })`.
+
 ### Backend
 A simple server with REST endpoints:
 - Auth
 - Recipe CRUD
 - URL import endpoint
 
+Current implementation notes:
+- Auth is already wired through a Next.js Route Handler at `src/app/api/auth/[...all]/route.ts`.
+- The route handler uses `toNextJsHandler(auth)` from Better Auth.
+
 ### Database
 One relational database for users and recipes.
+
+Current implementation notes:
+- Drizzle config now points to `src/lib/db/schema.ts` and outputs under `src/lib/db`.
+- The database client lives in `src/lib/db/index.ts`.
+- The Postgres client uses `prepare: false` for transaction-pool compatibility.
 
 ### AI extraction
 Backend fetches page content from a URL, sends cleaned text/HTML to an AI model, asks for structured recipe JSON, validates it, then stores it.
@@ -93,12 +108,22 @@ If preferred, this can also be a plain React frontend plus Node/Express backend,
 ### User
 - `id`
 - `email`
-- `name` (nullable if auth provider does not supply it)
+- `name`
 - `image` (nullable)
+- `email_verified`
 - `created_at`
+- `updated_at`
 
 ### Auth Account / Session
 Use the Better Auth tables required for Google OAuth and session persistence. Do not store password hashes for this version of the app.
+
+Current Better Auth schema in `src/lib/db/schema.ts` includes:
+- `user`
+- `session`
+- `account`
+- `verification`
+
+Google OAuth is the only configured provider right now.
 
 ### Recipe
 - `id`
@@ -189,10 +214,13 @@ Minimal expectations:
 - One Postgres database
 - Environment variables for:
   - `DATABASE_URL`
+  - `BETTER_AUTH_URL`
   - Better Auth secret
-  - Google OAuth client ID
-  - Google OAuth client secret
+  - `GOOGLE_CLIENT_ID`
+  - `GOOGLE_CLIENT_SECRET`
   - AI API key
+
+Note: the current auth config explicitly reads `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` from environment variables.
 
 For a hosted Postgres provider that uses transaction pool mode, configure the Node Postgres client accordingly (for example, `prepare: false` with `postgres-js` when required).
 
@@ -203,6 +231,14 @@ For a hosted Postgres provider that uses transaction pool mode, configure the No
 - Add recipe CRUD
 - Add manual recipe entry
 - Add recipe list/detail pages
+
+Phase 1 progress so far:
+- Better Auth is installed and configured.
+- Google sign-in is wired through the Better Auth client.
+- Sign-out is implemented.
+- Basic loading states exist for sign-in and sign-out buttons.
+- Server-side session reading is working on the homepage.
+- Drizzle schema and paths have been moved under `src/lib/db`.
 
 ### Phase 2
 - Add URL import form
