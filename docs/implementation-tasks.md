@@ -83,10 +83,28 @@ Create the application foundation so all later work has a stable structure.
 Set up persistent storage for users and recipes.
 
 #### Requirements
-- Install and configure Drizzle ORM and Drizzle Kit.
-- Connect Drizzle to Postgres using an environment variable.
+- Install and configure `drizzle-orm`, `drizzle-kit`, and the Postgres driver.
+- Connect Drizzle to Postgres using `DATABASE_URL`.
 - Create the initial Drizzle schema.
 - Add migrations.
+
+#### Suggested setup
+Install dependencies:
+- `npm install drizzle-orm postgres`
+- `npm install drizzle-kit --save-dev`
+
+Add environment configuration:
+- Define `DATABASE_URL` in `.env`
+- Example: `postgresql://...`
+
+Create a schema file such as `drizzle/schema.ts` for table definitions.
+
+Create a database client module that:
+- imports `drizzle` from `drizzle-orm/postgres-js`
+- imports `postgres` from `postgres`
+- reads `process.env.DATABASE_URL`
+- initializes the Postgres client with `prepare: false` when using transaction pool mode
+- exports the Drizzle database instance
 
 #### Data model requirements
 Implement at least these models based on the architecture:
@@ -123,7 +141,8 @@ Implement at least these models based on the architecture:
 - Drizzle schema matches architecture requirements.
 - Migration runs successfully.
 - Database tables are created.
-- The app can connect to the database locally.
+- The app can connect to the database locally using `DATABASE_URL`.
+- The database client is configured correctly for the chosen Postgres host/pool mode.
 
 ---
 

@@ -185,9 +185,11 @@ Minimal expectations:
 - One web app deployment
 - One Postgres database
 - Environment variables for:
-  - database URL
+  - `DATABASE_URL`
   - auth secret
   - AI API key
+
+For a hosted Postgres provider that uses transaction pool mode, configure the Node Postgres client accordingly (for example, `prepare: false` with `postgres-js` when required).
 
 ## Implementation Plan
 
