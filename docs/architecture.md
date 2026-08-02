@@ -44,10 +44,12 @@ A single web app with simple pages:
 
 Current implementation notes:
 - The app uses the Next.js App Router.
-- The current homepage (`src/app/page.tsx`) is acting as a temporary auth smoke test page.
-- The temporary homepage no longer reads from a throwaway test table; it now shows only landing-page text plus server session state.
+- The homepage (`src/app/page.tsx`) now acts as a public landing page with sign-in/session UI.
+- An authenticated route-group layout exists at `src/app/(app)/layout.tsx`.
+- Mock recipe pages now exist for `/recipes`, `/recipes/new`, `/recipes/import`, `/recipes/[id]`, and `/recipes/[id]/edit`.
 - Sign-in and sign-out are handled by client components in `src/components/`.
 - Server-rendered session state is read in Server Components with `auth.api.getSession({ headers: await headers() })`.
+- Unauthenticated users are redirected from recipe routes back to `/`.
 
 ### Backend
 A simple server with REST endpoints:
@@ -240,10 +242,12 @@ Phase 1 progress so far:
 - Google sign-in is wired through the Better Auth client.
 - Sign-out is implemented.
 - Basic loading states exist for sign-in and sign-out buttons.
-- Server-side session reading is working on the homepage.
+- Server-side session reading is working on the homepage and authenticated layout.
 - Drizzle schema and paths have been moved under `src/lib/db`.
 - The initial recipe data model is now present in `src/lib/db/schema.ts`.
 - The old throwaway test-table query has been removed from the homepage and DB helper module.
+- A shared authenticated app shell and navigation scaffold now exist.
+- Mock recipe list/detail/new/edit/import pages have been added under the App Router.
 
 ### Phase 2
 - Add URL import form

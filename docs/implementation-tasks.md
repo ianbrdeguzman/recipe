@@ -64,6 +64,8 @@ Create the application foundation so all later work has a stable structure.
 - In progress / partially complete.
 - `src/components/` and `src/lib/` now exist.
 - Database code has been moved from `src/drizzle/` to `src/lib/db/`.
+- App Router scaffolding now exists for the public homepage plus authenticated recipe routes.
+- Shared placeholder UI components have been added for mock page scaffolding.
 
 #### Suggested deliverables
 - A working app that runs locally.
@@ -214,7 +216,7 @@ Create a sign-in page or entry point that includes:
 - `src/components/signin-button.tsx` and `src/components/signout-button.tsx` are implemented.
 - Sign-out refreshes the current route so server-rendered session state updates.
 - Sign-in and sign-out both have basic loading states.
-- Route protection for future recipe pages is still pending.
+- Base route protection now exists in `src/app/(app)/layout.tsx`, which redirects unauthenticated users away from recipe routes.
 
 ---
 
@@ -245,10 +247,12 @@ Make the main app usable once a user is logged in.
 - Main app pages are reachable after sign-in.
 
 #### Current status
-- Not complete.
-- Auth state is currently being inspected directly on `src/app/page.tsx` as a temporary debug page.
-- The old DB test-data dump has been removed from that page, so it is now focused on auth/session smoke testing only.
-- A shared authenticated layout and navigation still need to be added.
+- Partially complete.
+- `src/app/(app)/layout.tsx` now provides a shared authenticated layout and route guard.
+- `src/components/app-nav.tsx` now provides placeholder navigation links for Recipes, New Recipe, and Import Recipe plus sign-out.
+- Mock pages now exist for recipe list, recipe detail, new recipe, edit recipe, and import recipe routes.
+- `src/app/page.tsx` now acts as a public landing page instead of only an auth smoke test page.
+- Real recipe data loading and page-specific functionality are still pending.
 
 ---
 
@@ -426,6 +430,10 @@ If user has no recipes, show:
 - Recipe list is readable and functional.
 - Empty state works correctly.
 
+#### Current status
+- Route scaffold exists at `src/app/(app)/recipes/page.tsx`.
+- The page currently renders a placeholder only; API integration and real list UI are still pending.
+
 ---
 
 ### Task 1.12: Build the new recipe page and form
@@ -459,6 +467,10 @@ Build a form with fields for:
 - Validation errors are shown clearly.
 - Successful submit persists data and redirects correctly.
 
+#### Current status
+- Route scaffold exists at `src/app/(app)/recipes/new/page.tsx`.
+- The page currently renders a placeholder only; the form and submit flow are still pending.
+
 ---
 
 ### Task 1.13: Build the recipe detail page
@@ -488,6 +500,10 @@ Display:
 - User can navigate to edit flow.
 - User can initiate delete flow.
 
+#### Current status
+- Route scaffold exists at `src/app/(app)/recipes/[id]/page.tsx`.
+- The page currently renders a placeholder only; recipe loading and actions are still pending.
+
 ---
 
 ### Task 1.14: Build the edit recipe page and form reuse
@@ -505,6 +521,10 @@ Allow a user to update an existing recipe using the same general form structure 
 - Existing recipe data loads into form.
 - User can edit and save changes.
 - Updated data appears on detail page after save.
+
+#### Current status
+- Route scaffold exists at `src/app/(app)/recipes/[id]/edit/page.tsx`.
+- The page currently renders a placeholder only; form reuse and update submission are still pending.
 
 ---
 
@@ -585,6 +605,10 @@ Create a page with:
 - User can access import page.
 - User can submit a URL.
 - Loading and error states are visible.
+
+#### Current status
+- Route scaffold exists at `src/app/(app)/recipes/import/page.tsx`.
+- The page currently renders a placeholder only; the URL form and import UX are still pending.
 
 ---
 
