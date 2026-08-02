@@ -98,7 +98,8 @@ Install dependencies:
 - `npm install drizzle-kit --save-dev`
 
 Add environment configuration:
-- Define `DATABASE_URL` in `.env`
+- Define `DATABASE_URL` in `.env` for the runtime app connection
+- Define `DRIZZLE_DATABASE_URL` in `.env` for Drizzle Kit migrations/introspection
 - Example: `postgresql://...`
 
 Create a schema file such as `src/lib/db/schema.ts` for table definitions.
@@ -156,10 +157,11 @@ Implement at least these models based on the architecture:
 #### Current status
 - Partially complete.
 - `drizzle-orm`, `drizzle-kit`, and `postgres` are installed.
-- `drizzle.config.ts` now points to `src/lib/db/schema.ts` and outputs under `src/lib/db`.
-- `src/lib/db/index.ts` creates the Postgres client with `prepare: false`.
+- `drizzle.config.ts` now points to `src/lib/db/schema.ts`, outputs under `src/lib/db`, and reads `DRIZZLE_DATABASE_URL`.
+- `src/lib/db/index.ts` creates the Postgres client with `prepare: false` and reads `DATABASE_URL`.
 - Better Auth tables have been added to the Drizzle schema.
-- A temporary `test` table still exists and should be replaced or removed when recipe tables are introduced.
+- The `recipe` table and `recipe_source_type` enum have been added.
+- The temporary `test` table and helper query have been removed.
 
 ---
 
@@ -245,6 +247,7 @@ Make the main app usable once a user is logged in.
 #### Current status
 - Not complete.
 - Auth state is currently being inspected directly on `src/app/page.tsx` as a temporary debug page.
+- The old DB test-data dump has been removed from that page, so it is now focused on auth/session smoke testing only.
 - A shared authenticated layout and navigation still need to be added.
 
 ---

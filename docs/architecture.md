@@ -45,6 +45,7 @@ A single web app with simple pages:
 Current implementation notes:
 - The app uses the Next.js App Router.
 - The current homepage (`src/app/page.tsx`) is acting as a temporary auth smoke test page.
+- The temporary homepage no longer reads from a throwaway test table; it now shows only landing-page text plus server session state.
 - Sign-in and sign-out are handled by client components in `src/components/`.
 - Server-rendered session state is read in Server Components with `auth.api.getSession({ headers: await headers() })`.
 
@@ -63,8 +64,10 @@ One relational database for users and recipes.
 
 Current implementation notes:
 - Drizzle config now points to `src/lib/db/schema.ts` and outputs under `src/lib/db`.
-- The database client lives in `src/lib/db/index.ts`.
+- Drizzle Kit now reads its connection string from `DRIZZLE_DATABASE_URL`.
+- The runtime database client lives in `src/lib/db/index.ts` and reads `DATABASE_URL`.
 - The Postgres client uses `prepare: false` for transaction-pool compatibility.
+- The initial `recipe` table and `recipe_source_type` enum have been added to the schema.
 
 ### AI extraction
 Backend fetches page content from a URL, sends cleaned text/HTML to an AI model, asks for structured recipe JSON, validates it, then stores it.
@@ -239,6 +242,8 @@ Phase 1 progress so far:
 - Basic loading states exist for sign-in and sign-out buttons.
 - Server-side session reading is working on the homepage.
 - Drizzle schema and paths have been moved under `src/lib/db`.
+- The initial recipe data model is now present in `src/lib/db/schema.ts`.
+- The old throwaway test-table query has been removed from the homepage and DB helper module.
 
 ### Phase 2
 - Add URL import form
