@@ -20,6 +20,13 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Commit Convention
+
+Use [Conventional Commits](https://www.conventionalcommits.org/) for every commit.
+
+- Format: `type(scope): summary`
+- Example: `feat(db): add Drizzle Postgres integration`
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
