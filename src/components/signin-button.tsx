@@ -19,7 +19,11 @@ export function SignInButton() {
   }, []);
 
   return (
-    <button disabled={loading} onClick={signIn}>
+    <button
+      className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white"
+      disabled={loading}
+      onClick={signIn}
+    >
       {loading ? "Signing in..." : "Sign In"}
     </button>
   );
