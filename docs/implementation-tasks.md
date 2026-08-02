@@ -21,7 +21,7 @@ Recommended stack from the architecture:
 - Next.js
 - Postgres
 - Drizzle ORM
-- Auth system
+- Better Auth with Google OAuth
 - OpenAI for recipe extraction
 
 ---
@@ -31,8 +31,7 @@ Recommended stack from the architecture:
 ### Phase Goal
 Build the first usable version of the product where a user can:
 
-- create an account
-- sign in
+- sign in with Google
 - sign out
 - create recipes manually
 - view their recipes in a list
@@ -67,7 +66,7 @@ Create the application foundation so all later work has a stable structure.
   - Recipes
   - New Recipe
   - Import Recipe
-  - Sign In / Sign Out
+  - Sign In with Google / Sign Out
 
 #### Acceptance criteria
 - App starts locally without errors.
@@ -112,8 +111,13 @@ Implement at least these models based on the architecture:
 ##### User
 - `id`
 - `email`
-- `password_hash` or equivalent auth field
+- `name` nullable
+- `image` nullable
 - `created_at`
+
+##### Better Auth tables
+- Add the Better Auth tables required for Google OAuth account linkage and session persistence.
+- Do not store password hashes for this app version.
 
 ##### Recipe
 - `id`
@@ -146,54 +150,46 @@ Implement at least these models based on the architecture:
 
 ---
 
-### Task 1.3: Implement authentication
+### Task 1.3: Implement authentication with Better Auth and Google OAuth
 
 #### Objective
-Allow users to securely create accounts and access only their own recipes.
+Allow users to securely sign in with Google and access only their own recipes.
 
 #### Requirements
-- Implement sign up.
-- Implement login.
-- Implement logout.
+- Install and configure Better Auth.
+- Configure Google OAuth.
+- Implement sign in.
+- Implement sign out.
 - Persist user session.
 - Protect authenticated routes.
 
 #### Minimum auth behavior
-- A new user can register with email and password.
-- Passwords must never be stored in plain text.
-- Existing users can log in with valid credentials.
+- A new user can sign in with Google and have a local user record created if needed.
+- Existing users can sign in again with the same Google account.
 - Logged-out users cannot access recipe pages or recipe APIs.
 - Logged-in users stay signed in across page navigation.
 
 #### API requirements
-Create endpoints matching the architecture or equivalent auth handling:
-- `POST /api/auth/signup`
-- `POST /api/auth/login`
-- `POST /api/auth/logout`
+- Add the Better Auth route handler(s) required for Google OAuth and session handling.
+- Use Better Auth's standard server/client helpers instead of custom email/password auth endpoints.
 
 #### UI requirements
-Create pages/forms for:
-- sign up
-- sign in
-
-Each form should include:
-- email input
-- password input
-- submit button
-- error message area
+Create a sign-in page or entry point that includes:
+- a “Continue with Google” button
+- a sign-out action
+- an error message area for failed auth flows
 
 #### Security requirements
-- Hash passwords using a standard library.
-- Validate email format.
-- Enforce a basic minimum password length.
+- Do not store passwords or password hashes.
+- Keep OAuth secrets in environment variables.
+- Validate and trust the authenticated session on the server for recipe access.
 - Return generic auth errors that do not leak unnecessary information.
 
 #### Acceptance criteria
-- User can sign up successfully.
-- User can sign in successfully.
+- User can sign in with Google successfully.
 - User can sign out successfully.
 - Protected routes redirect unauthenticated users.
-- Passwords are hashed in the database.
+- No password hashes are stored in the database.
 
 ---
 
@@ -216,12 +212,12 @@ Make the main app usable once a user is logged in.
 
 #### UX requirements
 - Logged-in users should be able to navigate between recipe pages easily.
-- Logged-out users should be directed to sign in.
+- Logged-out users should be directed to sign in with Google.
 
 #### Acceptance criteria
 - Navigation is visible and functional.
 - Auth state is reflected correctly in the layout.
-- Main app pages are reachable after login.
+- Main app pages are reachable after sign-in.
 
 ---
 
@@ -488,8 +484,8 @@ Make the app understandable when something goes wrong.
 
 #### Requirements
 Handle at least these cases:
-- invalid signup/login input
-- failed login
+- failed Google sign-in
+- canceled Google sign-in
 - unauthorized page access
 - recipe create/update validation failure
 - recipe not found
@@ -509,8 +505,7 @@ Handle at least these cases:
 
 Before marking Phase 1 complete, verify:
 
-- User can sign up.
-- User can sign in.
+- User can sign in with Google.
 - User can sign out.
 - Logged-out user cannot access recipe routes.
 - User can create a recipe manually.
@@ -874,8 +869,8 @@ Replace vague or technical errors with clear, specific guidance.
 
 #### Requirements
 Review all major flows and improve error copy for:
-- signup
-- login
+- Google sign-in
+- sign-out
 - recipe create
 - recipe update
 - recipe delete
@@ -900,8 +895,8 @@ Review all major flows and improve error copy for:
 Make the UI feel responsive and prevent duplicate actions.
 
 #### Required places for loading states
-- sign up form submit
-- sign in form submit
+- Google sign-in action
+- sign-out action
 - new recipe form submit
 - edit recipe form submit
 - delete action
@@ -978,7 +973,7 @@ Add simple server-side logs for:
 
 #### Logging rules
 - Do not log secrets.
-- Do not log passwords.
+- Do not log auth secrets, session tokens, or OAuth credentials.
 - Keep logs concise but useful.
 
 #### Acceptance criteria
@@ -992,8 +987,7 @@ Add simple server-side logs for:
 Before marking the project ready for initial release, verify:
 
 #### Auth
-- user can sign up
-- user can sign in
+- user can sign in with Google
 - user can sign out
 - auth-protected routes behave correctly
 

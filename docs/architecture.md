@@ -35,7 +35,7 @@ Guiding principles:
 
 ### Frontend
 A single web app with simple pages:
-- Sign in / sign up
+- Sign in with Google
 - Recipe list
 - Recipe detail
 - New recipe
@@ -60,7 +60,7 @@ Keep stack minimal and common:
 - **Backend**: Next.js API routes or Route Handlers
 - **Database**: Postgres
 - **ORM**: Drizzle ORM
-- **Auth**: NextAuth or simple email/password auth
+- **Auth**: Better Auth with Google OAuth
 - **AI**: OpenAI structured extraction
 - **Hosting**: Vercel + managed Postgres
 
@@ -93,8 +93,12 @@ If preferred, this can also be a plain React frontend plus Node/Express backend,
 ### User
 - `id`
 - `email`
-- `password_hash` or auth provider ID
+- `name` (nullable if auth provider does not supply it)
+- `image` (nullable)
 - `created_at`
+
+### Auth Account / Session
+Use the Better Auth tables required for Google OAuth and session persistence. Do not store password hashes for this version of the app.
 
 ### Recipe
 - `id`
@@ -114,9 +118,8 @@ If preferred, this can also be a plain React frontend plus Node/Express backend,
 ## API Endpoints
 
 ### Auth
-- `POST /api/auth/signup`
-- `POST /api/auth/login`
-- `POST /api/auth/logout`
+- Better Auth route handlers for Google OAuth sign-in and sign-out
+- The app should use Better Auth's standard server/client helpers instead of custom email/password auth endpoints
 
 ### Recipes
 - `GET /api/recipes`
@@ -186,7 +189,9 @@ Minimal expectations:
 - One Postgres database
 - Environment variables for:
   - `DATABASE_URL`
-  - auth secret
+  - Better Auth secret
+  - Google OAuth client ID
+  - Google OAuth client secret
   - AI API key
 
 For a hosted Postgres provider that uses transaction pool mode, configure the Node Postgres client accordingly (for example, `prepare: false` with `postgres-js` when required).
@@ -194,7 +199,7 @@ For a hosted Postgres provider that uses transaction pool mode, configure the No
 ## Implementation Plan
 
 ### Phase 1
-- Set up app shell and auth
+- Set up app shell and Better Auth with Google OAuth
 - Add recipe CRUD
 - Add manual recipe entry
 - Add recipe list/detail pages
