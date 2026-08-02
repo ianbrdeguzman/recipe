@@ -5,7 +5,9 @@ import {
   timestamp,
   boolean,
   index,
-  varchar,
+  pgEnum,
+  jsonb,
+  integer,
 } from "drizzle-orm/pg-core";
 
 // BETTER AUTH TABLES
@@ -100,16 +102,43 @@ export const accountRelations = relations(account, ({ one }) => ({
   }),
 }));
 
-export const test = pgTable("test", {
+export const recipeSourceTypeEnum = pgEnum("recipe_source_type", [
+  "manual",
+  "url",
+]);
+
+export const recipe = pgTable("recipe", {
   id: text("id").primaryKey(),
-  name: text("name"),
-  phone: varchar("phone", { length: 256 }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  sourceType: recipeSourceTypeEnum("source_type").notNull(),
+  sourceUrl: text("source_url"),
+  title: text("title").notNull(),
+  description: text("description"),
+  servings: integer("servings"),
+  prepTimeMinutes: integer("prep_time_minutes"),
+  cookTimeMinutes: integer("cook_time_minutes"),
+  ingredients: jsonb("ingredients").notNull(),
+  instructions: jsonb("instructions").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
 });
+
+export const recipeRelations = relations(recipe, ({ one }) => ({
+  user: one(user, {
+    fields: [recipe.userId],
+    references: [user.id],
+  }),
+}));
 
 export const schema = {
   user,
   session,
   account,
   verification,
-  test,
+  recipe,
 };
