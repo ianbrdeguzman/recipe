@@ -59,7 +59,7 @@ Keep stack minimal and common:
 - **Frontend**: Next.js
 - **Backend**: Next.js API routes or Route Handlers
 - **Database**: Postgres
-- **ORM**: Prisma
+- **ORM**: Drizzle ORM
 - **Auth**: NextAuth or simple email/password auth
 - **AI**: OpenAI structured extraction
 - **Hosting**: Vercel + managed Postgres

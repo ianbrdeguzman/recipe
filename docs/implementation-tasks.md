@@ -20,7 +20,7 @@ Recommended stack from the architecture:
 
 - Next.js
 - Postgres
-- Prisma
+- Drizzle ORM
 - Auth system
 - OpenAI for recipe extraction
 
@@ -57,7 +57,7 @@ Create the application foundation so all later work has a stable structure.
   - pages/routes
   - components
   - server utilities
-  - database/prisma
+  - database/drizzle
   - validation schemas
 - Add a shared layout with navigation.
 
@@ -77,15 +77,15 @@ Create the application foundation so all later work has a stable structure.
 
 ---
 
-### Task 1.2: Configure the database and Prisma
+### Task 1.2: Configure the database and Drizzle
 
 #### Objective
 Set up persistent storage for users and recipes.
 
 #### Requirements
-- Install and configure Prisma.
-- Connect Prisma to Postgres using an environment variable.
-- Create the initial Prisma schema.
+- Install and configure Drizzle ORM and Drizzle Kit.
+- Connect Drizzle to Postgres using an environment variable.
+- Create the initial Drizzle schema.
 - Add migrations.
 
 #### Data model requirements
@@ -115,12 +115,12 @@ Implement at least these models based on the architecture:
 #### Implementation notes
 - Define a one-to-many relationship from user to recipes.
 - Store ingredients and instructions in the simplest usable format.
-  - Prefer JSON arrays if convenient with Prisma/Postgres.
+  - Prefer JSON arrays if convenient with Drizzle/Postgres.
   - If needed, use text arrays or serialized JSON.
 - Add timestamps with sensible defaults.
 
 #### Acceptance criteria
-- Prisma schema matches architecture requirements.
+- Drizzle schema matches architecture requirements.
 - Migration runs successfully.
 - Database tables are created.
 - The app can connect to the database locally.
@@ -1010,7 +1010,7 @@ Before marking the project ready for initial release, verify:
 If one developer is implementing from scratch, use this order:
 
 1. project setup
-2. database + Prisma
+2. database + Drizzle
 3. authentication
 4. protected layout/navigation
 5. recipe validation
