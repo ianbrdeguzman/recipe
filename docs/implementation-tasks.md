@@ -287,6 +287,14 @@ Create validation rules for recipe creation and update.
 - Error messages are usable in the frontend.
 - One shared schema or equivalent validation logic is used consistently.
 
+#### Current status
+- Partially complete.
+- Recipe create validation now exists in `src/lib/recipes/schema.ts`.
+- The schema trims required string fields, rejects empty titles, rejects blank ingredient/instruction rows, and enforces positive integer numeric fields when provided.
+- Recipe insert mapping now exists in `src/lib/recipes/mappers.ts`.
+- Optional text is normalized before insert so blank descriptions are stored as `null`.
+- Update/import-specific schema reuse is still pending.
+
 ---
 
 ### Task 1.6: Implement recipe create API
@@ -314,6 +322,15 @@ Create:
 - Authenticated user can create a recipe.
 - Unauthenticated user receives an auth error.
 - Stored recipe belongs to the logged-in user.
+
+#### Current status
+- Partially complete.
+- `POST /api/recipes` now exists at `src/app/api/recipes/route.ts`.
+- The endpoint requires an authenticated Better Auth session.
+- Request bodies are validated with `createRecipeSchema` from `src/lib/recipes/schema.ts`.
+- Insert values are derived from the authenticated session via `toRecipe()` in `src/lib/recipes/mappers.ts`, so `user_id` cannot be impersonated by client payload.
+- New recipes are saved with `source_type` set to `manual` and returned from the endpoint.
+- UI wiring and manual end-to-end verification are still pending.
 
 ---
 
