@@ -338,7 +338,8 @@ Create:
 - Request bodies are validated with `createRecipeSchema` from `src/lib/recipes/schema.ts`.
 - Insert values are derived from the authenticated session via `toRecipe()` in `src/lib/recipes/mappers.ts`, so `user_id` cannot be impersonated by client payload.
 - New recipes are saved with `source_type` set to `manual` and returned from the endpoint.
-- UI wiring and manual end-to-end verification are still pending.
+- The new recipe page now posts to this endpoint via `src/components/new-recipe-form.tsx`.
+- Manual end-to-end verification is still pending.
 
 ---
 
@@ -528,8 +529,13 @@ Build a form with fields for:
 - Successful submit persists data and redirects correctly.
 
 #### Current status
-- Route scaffold exists at `src/app/(app)/recipes/new/page.tsx`.
-- The page currently renders a placeholder only; the form and submit flow are still pending.
+- Implemented.
+- `src/app/(app)/recipes/new/page.tsx` now renders a real manual-entry page instead of a placeholder.
+- `src/components/new-recipe-form.tsx` now provides the create form UI for title, description, servings, prep time, cook time, ingredients, and instructions.
+- The form supports repeatable ingredient and instruction rows with add/remove actions.
+- Submission is wired to `POST /api/recipes`.
+- The submit flow shows inline validation/server errors, disables repeated submission while saving, and redirects to the created recipe detail page on success.
+- Manual end-to-end verification is still pending.
 
 ---
 
@@ -1015,8 +1021,9 @@ Review all major flows and improve error copy for:
 - Partially complete already.
 - Google sign-in action has a loading state in `src/components/signin-button.tsx`.
 - Sign-out action has a loading state in `src/components/signout-button.tsx`.
+- Recipe create now has a loading state in `src/components/new-recipe-form.tsx`.
 - Recipe delete now has a loading state in `src/components/delete-recipe-button.tsx`.
-- Loading states for recipe create/edit/import are still pending.
+- Loading states for recipe edit/import are still pending.
 
 #### Objective
 Make the UI feel responsive and prevent duplicate actions.

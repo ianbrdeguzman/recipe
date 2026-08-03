@@ -47,7 +47,9 @@ Current implementation notes:
 - The homepage (`src/app/page.tsx`) now acts as a public landing page with sign-in/session UI.
 - An authenticated route-group layout exists at `src/app/(app)/layout.tsx`.
 - The recipe list page at `/recipes` now renders a real server component dashboard backed by a Drizzle query scoped to the authenticated user.
-- Placeholder pages still exist for `/recipes/new`, `/recipes/import`, `/recipes/[id]`, and `/recipes/[id]/edit`.
+- The new recipe page at `/recipes/new` now renders a real manual-entry screen with a client form component at `src/components/new-recipe-form.tsx`.
+- The recipe detail page at `/recipes/[id]` now renders a real server component detail view scoped to the authenticated user.
+- Placeholder pages still exist for `/recipes/import` and `/recipes/[id]/edit`.
 - Sign-in and sign-out are handled by client components in `src/components/`.
 - Server-rendered session state is read in Server Components with `auth.api.getSession({ headers: await headers() })`.
 - Unauthenticated users are redirected from recipe routes back to `/`.
@@ -251,7 +253,9 @@ Phase 1 progress so far:
 - The old throwaway test-table query has been removed from the homepage and DB helper module.
 - A shared authenticated app shell and navigation scaffold now exist.
 - The recipe list page is now implemented as a real authenticated dashboard with an empty state and recipe links.
-- Placeholder pages still exist for recipe detail/new/edit/import flows under the App Router.
+- The new recipe page now supports manual creation through `src/components/new-recipe-form.tsx`, including repeatable ingredient/instruction rows, loading state, validation error display, and redirect on success.
+- The recipe detail page is now implemented as a real authenticated view with recipe metadata, ingredient/instruction lists, and delete initiation.
+- Placeholder pages still exist for recipe edit and import flows under the App Router.
 - A repeatable mock-data seed path now exists via `pnpm db:seed` for the fixed test user `nmvtmxLrMHiXCMlpFH5jn9DDVYGpAonU`.
 
 ### Phase 2
