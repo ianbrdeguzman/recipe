@@ -70,6 +70,8 @@ Current implementation notes:
 - The runtime database client lives in `src/lib/db/index.ts` and reads `DATABASE_URL`.
 - The Postgres client uses `prepare: false` for transaction-pool compatibility.
 - The initial `recipe` table and `recipe_source_type` enum have been added to the schema.
+- An idempotent recipe seed script now exists at `src/scripts/seed-recipes.ts`.
+- The seed script is exposed as `pnpm db:seed` and inserts mock recipes for the fixed user ID `nmvtmxLrMHiXCMlpFH5jn9DDVYGpAonU` when those titles do not already exist.
 
 ### AI extraction
 Backend fetches page content from a URL, sends cleaned text/HTML to an AI model, asks for structured recipe JSON, validates it, then stores it.
@@ -248,6 +250,7 @@ Phase 1 progress so far:
 - The old throwaway test-table query has been removed from the homepage and DB helper module.
 - A shared authenticated app shell and navigation scaffold now exist.
 - Mock recipe list/detail/new/edit/import pages have been added under the App Router.
+- A repeatable mock-data seed path now exists via `pnpm db:seed` for the fixed test user `nmvtmxLrMHiXCMlpFH5jn9DDVYGpAonU`.
 
 ### Phase 2
 - Add URL import form

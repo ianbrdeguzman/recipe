@@ -99,6 +99,10 @@ Install dependencies:
 - `npm install drizzle-orm postgres`
 - `npm install drizzle-kit --save-dev`
 
+Suggested package scripts:
+- `db:push` for schema pushes
+- `db:seed` for local mock recipe data seeding
+
 Add environment configuration:
 - Define `DATABASE_URL` in `.env` for the runtime app connection
 - Define `DRIZZLE_DATABASE_URL` in `.env` for Drizzle Kit migrations/introspection
@@ -155,6 +159,7 @@ Implement at least these models based on the architecture:
 - Database tables are created.
 - The app can connect to the database locally using `DATABASE_URL`.
 - The database client is configured correctly for the chosen Postgres host/pool mode.
+- Local developers can seed repeatable mock recipe data for testing without creating duplicate rows for the same seeded titles.
 
 #### Current status
 - Partially complete.
@@ -164,6 +169,8 @@ Implement at least these models based on the architecture:
 - Better Auth tables have been added to the Drizzle schema.
 - The `recipe` table and `recipe_source_type` enum have been added.
 - The temporary `test` table and helper query have been removed.
+- A seed script now exists at `src/scripts/seed-recipes.ts` and is exposed via `pnpm db:seed`.
+- The seed is idempotent by `user_id + title` for the fixed mock user `nmvtmxLrMHiXCMlpFH5jn9DDVYGpAonU`.
 
 ---
 
