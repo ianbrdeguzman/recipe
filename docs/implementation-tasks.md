@@ -561,8 +561,13 @@ Display:
 - User can initiate delete flow.
 
 #### Current status
-- Route scaffold exists at `src/app/(app)/recipes/[id]/page.tsx`.
-- The page currently renders a placeholder only; recipe loading and actions are still pending.
+- Implemented.
+- `src/app/(app)/recipes/[id]/page.tsx` now renders a real server component recipe detail page instead of a placeholder.
+- The page reads the authenticated session on the server, queries the database directly with Drizzle, and scopes recipe lookup to the current user's `user_id`.
+- Missing or non-owned recipes now resolve to a not-found page rather than exposing other users' data.
+- The page now displays recipe metadata, ingredients, instructions, source information, and navigation actions.
+- Edit navigation is wired to `src/app/(app)/recipes/[id]/edit/page.tsx`.
+- Delete initiation is now wired through `src/components/delete-recipe-button.tsx`, which opens a custom confirmation modal, calls `DELETE /api/recipes/:id`, shows loading/error state, and redirects back to `/recipes` on success.
 
 ---
 
@@ -1010,7 +1015,8 @@ Review all major flows and improve error copy for:
 - Partially complete already.
 - Google sign-in action has a loading state in `src/components/signin-button.tsx`.
 - Sign-out action has a loading state in `src/components/signout-button.tsx`.
-- Loading states for recipe create/edit/delete/import are still pending.
+- Recipe delete now has a loading state in `src/components/delete-recipe-button.tsx`.
+- Loading states for recipe create/edit/import are still pending.
 
 #### Objective
 Make the UI feel responsive and prevent duplicate actions.
@@ -1052,6 +1058,13 @@ Review and improve:
 #### Acceptance criteria
 - Important edge cases have clean UI treatment.
 - User is never left on a blank or confusing screen.
+
+#### Current status
+- Partially complete.
+- Missing or non-owned recipe detail requests now resolve via `notFound()` in `src/app/(app)/recipes/[id]/page.tsx` instead of a placeholder view.
+- Recipe delete now uses an in-app confirmation modal with inline error handling in `src/components/delete-recipe-button.tsx`.
+- Empty recipe list polish already exists on `src/app/(app)/recipes/page.tsx`.
+- Dedicated not-found UI and broader fallback state review are still pending.
 
 ---
 
