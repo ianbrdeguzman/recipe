@@ -46,7 +46,8 @@ Current implementation notes:
 - The app uses the Next.js App Router.
 - The homepage (`src/app/page.tsx`) now acts as a public landing page with sign-in/session UI.
 - An authenticated route-group layout exists at `src/app/(app)/layout.tsx`.
-- Mock recipe pages now exist for `/recipes`, `/recipes/new`, `/recipes/import`, `/recipes/[id]`, and `/recipes/[id]/edit`.
+- The recipe list page at `/recipes` now renders a real server component dashboard backed by a Drizzle query scoped to the authenticated user.
+- Placeholder pages still exist for `/recipes/new`, `/recipes/import`, `/recipes/[id]`, and `/recipes/[id]/edit`.
 - Sign-in and sign-out are handled by client components in `src/components/`.
 - Server-rendered session state is read in Server Components with `auth.api.getSession({ headers: await headers() })`.
 - Unauthenticated users are redirected from recipe routes back to `/`.
@@ -249,7 +250,8 @@ Phase 1 progress so far:
 - The initial recipe data model is now present in `src/lib/db/schema.ts`.
 - The old throwaway test-table query has been removed from the homepage and DB helper module.
 - A shared authenticated app shell and navigation scaffold now exist.
-- Mock recipe list/detail/new/edit/import pages have been added under the App Router.
+- The recipe list page is now implemented as a real authenticated dashboard with an empty state and recipe links.
+- Placeholder pages still exist for recipe detail/new/edit/import flows under the App Router.
 - A repeatable mock-data seed path now exists via `pnpm db:seed` for the fixed test user `nmvtmxLrMHiXCMlpFH5jn9DDVYGpAonU`.
 
 ### Phase 2

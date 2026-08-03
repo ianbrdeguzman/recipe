@@ -483,13 +483,16 @@ If user has no recipes, show:
 - a call to action to create a recipe manually
 
 #### Acceptance criteria
-- Page loads recipes from API.
+- Page loads the current user's recipes successfully.
 - Recipe list is readable and functional.
 - Empty state works correctly.
 
 #### Current status
-- Route scaffold exists at `src/app/(app)/recipes/page.tsx`.
-- The page currently renders a placeholder only; API integration and real list UI are still pending.
+- Implemented.
+- `src/app/(app)/recipes/page.tsx` now renders a real server component recipe list instead of a placeholder.
+- The page reads the authenticated session on the server and queries the database directly with Drizzle rather than calling the internal API route.
+- Recipes are ordered by `updated_at` descending and link to their detail pages.
+- The page includes create/import actions plus an empty state with a manual-create call to action.
 
 ---
 
