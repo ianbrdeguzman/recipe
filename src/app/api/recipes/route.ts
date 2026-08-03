@@ -1,10 +1,29 @@
+import { desc, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
 import { auth } from "@/lib/auth";
+import { createRecipeSchema } from "@/lib/recipes/schema";
 import { db } from "@/lib/db";
 import { recipe } from "@/lib/db/schema";
 import { toRecipe } from "@/lib/recipes/mappers";
-import { createRecipeSchema } from "@/lib/recipes/schema";
+
+export async function GET() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const recipes = await db
+    .select()
+    .from(recipe)
+    .where(eq(recipe.userId, session.user.id))
+    .orderBy(desc(recipe.updatedAt));
+
+  return Response.json(recipes, { status: 200 });
+}
 
 export async function POST(request: Request) {
   const session = await auth.api.getSession({

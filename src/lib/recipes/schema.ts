@@ -5,7 +5,7 @@ const nonEmptyListItem = z
   .trim()
   .min(1, "This field cannot be blank.");
 
-export const createRecipeSchema = z.object({
+export const recipeInputSchema = z.object({
   title: z.string().trim().min(1, "Title is required."),
   description: z.string().nullable().optional(),
   servings: z.number().int().positive().nullable().optional(),
@@ -14,5 +14,7 @@ export const createRecipeSchema = z.object({
   ingredients: z.array(nonEmptyListItem).min(1, "Add at least 1 ingredient."),
   instructions: z.array(nonEmptyListItem).min(1, "Add at least 1 instruction."),
 });
+export const createRecipeSchema = recipeInputSchema;
+export const updateRecipeSchema = recipeInputSchema;
 
-export type CreateRecipe = z.infer<typeof createRecipeSchema>;
+export type RecipeInput = z.infer<typeof recipeInputSchema>;
