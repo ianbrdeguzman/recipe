@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { NewRecipeForm } from "@/components/new-recipe-form";
+import { RecipeForm } from "@/components/recipe-form";
 
 export default function NewRecipePage() {
   return (
@@ -27,7 +27,7 @@ export default function NewRecipePage() {
       </div>
 
       <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <NewRecipeForm />
+        <RecipeForm mode="create" />
       </div>
     </section>
   );

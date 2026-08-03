@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 
-const createRecipeErrorResponseSchema = z.object({
+const recipeMutationErrorResponseSchema = z.object({
   error: z.string(),
   fieldErrors: z.record(z.string(), z.array(z.string())).optional(),
 });
 
-const createRecipeResponseSchema = z.object({
+const recipeMutationResponseSchema = z.object({
   id: z.string(),
   title: z.string(),
 });
@@ -27,66 +27,159 @@ type FieldErrors = Partial<
   >
 >;
 
-export function NewRecipeForm() {
+type RecipeFormValues = {
+  title: string;
+  description: string | null;
+  servings: number | null;
+  prepTimeMinutes: number | null;
+  cookTimeMinutes: number | null;
+  ingredients: string[];
+  instructions: string[];
+};
+
+type RecipeFormProps = {
+  mode: "create" | "edit";
+  recipeId?: string;
+  initialValues?: Partial<RecipeFormValues>;
+};
+
+const defaultValues: RecipeFormValues = {
+  title: "",
+  description: null,
+  servings: null,
+  prepTimeMinutes: null,
+  cookTimeMinutes: null,
+  ingredients: [""],
+  instructions: [""],
+};
+
+function resolveInitialValues(
+  initialValues?: Partial<RecipeFormValues>,
+): RecipeFormValues {
+  return {
+    ...defaultValues,
+    ...initialValues,
+    ingredients:
+      initialValues?.ingredients && initialValues.ingredients.length > 0
+        ? initialValues.ingredients
+        : [""],
+    instructions:
+      initialValues?.instructions && initialValues.instructions.length > 0
+        ? initialValues.instructions
+        : [""],
+  };
+}
+
+export function RecipeForm({ mode, recipeId, initialValues }: RecipeFormProps) {
   const router = useRouter();
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [servings, setServings] = useState("");
-  const [prepTimeMinutes, setPrepTimeMinutes] = useState("");
-  const [cookTimeMinutes, setCookTimeMinutes] = useState("");
-  const [ingredients, setIngredients] = useState([""]);
-  const [instructions, setInstructions] = useState([""]);
+  const isNewRecipe = mode === "create";
+  const buttonLabel = isNewRecipe ? "Create recipe" : "Save changes";
+  const cancelHref = isNewRecipe ? "/recipes" : `/recipes/${recipeId}`;
+
+  const resolvedInitialValues = resolveInitialValues(initialValues);
+
+  const [title, setTitle] = useState(resolvedInitialValues.title);
+  const [description, setDescription] = useState(
+    resolvedInitialValues.description ?? "",
+  );
+  const [servings, setServings] = useState(
+    resolvedInitialValues.servings
+      ? String(resolvedInitialValues.servings)
+      : "",
+  );
+  const [prepTimeMinutes, setPrepTimeMinutes] = useState(
+    resolvedInitialValues.prepTimeMinutes
+      ? String(resolvedInitialValues.prepTimeMinutes)
+      : "",
+  );
+  const [cookTimeMinutes, setCookTimeMinutes] = useState(
+    resolvedInitialValues.cookTimeMinutes
+      ? String(resolvedInitialValues.cookTimeMinutes)
+      : "",
+  );
+  const [ingredients, setIngredients] = useState(
+    resolvedInitialValues.ingredients,
+  );
+  const [instructions, setInstructions] = useState(
+    resolvedInitialValues.instructions,
+  );
+
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function updateListItem(
-    setter: React.Dispatch<React.SetStateAction<string[]>>,
-    index: number,
-    value: string,
-  ) {
-    setter((items) => items.map((item, i) => (i === index ? value : item)));
-  }
+  const updateListItem = useCallback(
+    (
+      setter: React.Dispatch<React.SetStateAction<string[]>>,
+      index: number,
+      value: string,
+    ) => {
+      setter((items) => items.map((item, i) => (i === index ? value : item)));
+    },
+    [],
+  );
 
-  function addListItem(setter: React.Dispatch<React.SetStateAction<string[]>>) {
-    setter((items) => [...items, ""]);
-  }
+  const addListItem = useCallback(
+    (setter: React.Dispatch<React.SetStateAction<string[]>>) => {
+      setter((items) => [...items, ""]);
+    },
+    [],
+  );
 
-  function removeListItem(
-    setter: React.Dispatch<React.SetStateAction<string[]>>,
-    index: number,
-  ) {
-    setter((items) =>
-      items.length === 1 ? items : items.filter((_, i) => i !== index),
-    );
-  }
+  const removeListItem = useCallback(
+    (setter: React.Dispatch<React.SetStateAction<string[]>>, index: number) => {
+      setter((items) =>
+        items.length === 1 ? items : items.filter((_, i) => i !== index),
+      );
+    },
+    [],
+  );
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!isNewRecipe && !recipeId) {
+      setFormError("Recipe ID is required to save changes.");
+      return;
+    }
+
     setIsSubmitting(true);
     setErrors({});
     setFormError(null);
 
-    const response = await fetch("/api/recipes", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        description: description.trim() || null,
-        servings: servings ? Number(servings) : null,
-        prepTimeMinutes: prepTimeMinutes ? Number(prepTimeMinutes) : null,
-        cookTimeMinutes: cookTimeMinutes ? Number(cookTimeMinutes) : null,
-        ingredients,
-        instructions,
-      }),
-    });
+    const endpoint = isNewRecipe ? "/api/recipes" : `/api/recipes/${recipeId}`;
+
+    const method = isNewRecipe ? "POST" : "PUT";
+
+    let response: Response;
+
+    try {
+      response = await fetch(endpoint, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          description: description.trim() || null,
+          servings: servings ? Number(servings) : null,
+          prepTimeMinutes: prepTimeMinutes ? Number(prepTimeMinutes) : null,
+          cookTimeMinutes: cookTimeMinutes ? Number(cookTimeMinutes) : null,
+          ingredients,
+          instructions,
+        }),
+      });
+    } catch {
+      setErrors({});
+      setFormError("Could not save recipe.");
+      setIsSubmitting(false);
+      return;
+    }
 
     if (!response.ok) {
-      const data = await response.json();
-      const result = createRecipeErrorResponseSchema.safeParse(data);
+      const data = await response.json().catch(() => null);
+      const result = recipeMutationErrorResponseSchema.safeParse(data);
 
       if (result.success) {
         setErrors(result.data.fieldErrors ?? {});
@@ -100,17 +193,18 @@ export function NewRecipeForm() {
       return;
     }
 
-    const data = await response.json();
-    const result = createRecipeResponseSchema.safeParse(data);
+    const data = await response.json().catch(() => null);
+    const result = recipeMutationResponseSchema.safeParse(data);
 
     if (!result.success) {
       setFormError("Recipe was saved, but the response was invalid.");
+      setIsSubmitting(false);
       return;
     }
 
-    const recipe = result.data;
-    router.push(`/recipes/${recipe.id}`);
-  }
+    router.push(`/recipes/${result.data.id}`);
+    router.refresh();
+  };
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
@@ -146,6 +240,9 @@ export function NewRecipeForm() {
           rows={4}
           className="rounded-md border border-zinc-300 px-3 py-2 text-sm"
         />
+        {errors.description ? (
+          <p className="text-sm text-red-600">{errors.description[0]}</p>
+        ) : null}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -202,6 +299,15 @@ export function NewRecipeForm() {
             className="rounded-md border border-zinc-300 px-3 py-2 text-sm"
           />
         </div>
+        {errors.servings ? (
+          <p className="text-sm text-red-600">{errors.servings[0]}</p>
+        ) : null}
+        {errors.prepTimeMinutes ? (
+          <p className="text-sm text-red-600">{errors.prepTimeMinutes[0]}</p>
+        ) : null}
+        {errors.cookTimeMinutes ? (
+          <p className="text-sm text-red-600">{errors.cookTimeMinutes[0]}</p>
+        ) : null}
       </div>
 
       <div className="grid gap-3">
@@ -287,12 +393,12 @@ export function NewRecipeForm() {
           disabled={isSubmitting}
           className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
         >
-          {isSubmitting ? "Saving..." : "Create recipe"}
+          {isSubmitting ? "Saving..." : buttonLabel}
         </button>
 
         <button
           type="button"
-          onClick={() => router.push("/recipes")}
+          onClick={() => router.push(cancelHref)}
           className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900"
         >
           Cancel
