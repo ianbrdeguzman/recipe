@@ -570,7 +570,7 @@ Display:
 - Implemented.
 - `src/app/(app)/recipes/[id]/page.tsx` now renders a real server component recipe detail page instead of a placeholder.
 - The page reads the authenticated session on the server, queries the database directly with Drizzle, and scopes recipe lookup to the current user's `user_id`.
-- Missing or non-owned recipes now resolve to a not-found page rather than exposing other users' data.
+- Missing or non-owned recipes now resolve to the signed-in-area not-found UI at `src/app/(app)/not-found.tsx` rather than exposing other users' data.
 - The page now displays recipe metadata, ingredients, instructions, source information, and navigation actions.
 - Edit navigation is wired to `src/app/(app)/recipes/[id]/edit/page.tsx`.
 - Delete initiation is now wired through `src/components/delete-recipe-button.tsx`, which opens a custom confirmation modal, calls `DELETE /api/recipes/:id`, shows loading/error state, and redirects back to `/recipes` on success.
@@ -1068,10 +1068,11 @@ Review and improve:
 
 #### Current status
 - Partially complete.
-- Missing or non-owned recipe detail requests now resolve via `notFound()` in `src/app/(app)/recipes/[id]/page.tsx` instead of a placeholder view.
+- Missing or non-owned recipe detail requests now resolve via `notFound()` in `src/app/(app)/recipes/[id]/page.tsx`.
+- Dedicated not-found UIs now exist at `src/app/not-found.tsx` for app-wide 404s and `src/app/(app)/not-found.tsx` for signed-in recipe-area missing-resource states.
 - Recipe delete now uses an in-app confirmation modal with inline error handling in `src/components/delete-recipe-button.tsx`.
 - Empty recipe list polish already exists on `src/app/(app)/recipes/page.tsx`.
-- Dedicated not-found UI and broader fallback state review are still pending.
+- Broader fallback state review is still pending.
 
 ---
 

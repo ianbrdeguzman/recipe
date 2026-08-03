@@ -49,6 +49,7 @@ Current implementation notes:
 - The recipe list page at `/recipes` now renders a real server component dashboard backed by a Drizzle query scoped to the authenticated user.
 - The new recipe page at `/recipes/new` now renders a real manual-entry screen with a client form component at `src/components/new-recipe-form.tsx`.
 - The recipe detail page at `/recipes/[id]` now renders a real server component detail view scoped to the authenticated user.
+- Custom not-found UIs now exist at `src/app/not-found.tsx` for app-wide 404s and `src/app/(app)/not-found.tsx` for signed-in recipe-area missing-resource states.
 - Placeholder pages still exist for `/recipes/import` and `/recipes/[id]/edit`.
 - Sign-in and sign-out are handled by client components in `src/components/`.
 - Server-rendered session state is read in Server Components with `auth.api.getSession({ headers: await headers() })`.
@@ -209,6 +210,7 @@ Keep only the basics:
 - If page fetch fails: show “Could not fetch recipe URL”
 - If AI extraction fails: show “Could not extract recipe automatically”
 - If stored recipe is incomplete: allow user to edit before saving final version, or save draft if needed later
+- If a recipe does not exist or is not owned by the current user: show a clear not-found screen instead of a blank page
 
 For V1, simplest option: only save when extraction passes validation.
 
@@ -255,6 +257,7 @@ Phase 1 progress so far:
 - The recipe list page is now implemented as a real authenticated dashboard with an empty state and recipe links.
 - The new recipe page now supports manual creation through `src/components/new-recipe-form.tsx`, including repeatable ingredient/instruction rows, loading state, validation error display, and redirect on success.
 - The recipe detail page is now implemented as a real authenticated view with recipe metadata, ingredient/instruction lists, and delete initiation.
+- Dedicated app-wide and authenticated-area not-found pages now exist for missing routes and missing recipe resources.
 - Placeholder pages still exist for recipe edit and import flows under the App Router.
 - A repeatable mock-data seed path now exists via `pnpm db:seed` for the fixed test user `nmvtmxLrMHiXCMlpFH5jn9DDVYGpAonU`.
 
