@@ -256,10 +256,10 @@ Make the main app usable once a user is logged in.
 #### Current status
 - Partially complete.
 - `src/app/(app)/layout.tsx` now provides a shared authenticated layout and route guard.
-- `src/components/app-nav.tsx` now provides placeholder navigation links for Recipes, New Recipe, and Import Recipe plus sign-out.
-- Mock pages now exist for recipe list, recipe detail, new recipe, edit recipe, and import recipe routes.
+- `src/components/app-nav.tsx` now provides navigation links for Recipes, New Recipe, and Import Recipe plus sign-out.
+- Real recipe list, detail, new, and edit pages now exist under the authenticated app area.
+- The import recipe route still remains a placeholder.
 - `src/app/page.tsx` now acts as a public landing page instead of only an auth smoke test page.
-- Real recipe data loading and page-specific functionality are still pending.
 
 ---
 
@@ -338,7 +338,7 @@ Create:
 - Request bodies are validated with `createRecipeSchema` from `src/lib/recipes/schema.ts`.
 - Insert values are derived from the authenticated session via `toRecipe()` in `src/lib/recipes/mappers.ts`, so `user_id` cannot be impersonated by client payload.
 - New recipes are saved with `source_type` set to `manual` and returned from the endpoint.
-- The new recipe page now posts to this endpoint via `src/components/new-recipe-form.tsx`.
+- The new recipe page now posts to this endpoint via the shared `src/components/recipe-form.tsx` component in create mode.
 - Manual end-to-end verification is still pending.
 
 ---
@@ -531,7 +531,8 @@ Build a form with fields for:
 #### Current status
 - Implemented.
 - `src/app/(app)/recipes/new/page.tsx` now renders a real manual-entry page instead of a placeholder.
-- `src/components/new-recipe-form.tsx` now provides the create form UI for title, description, servings, prep time, cook time, ingredients, and instructions.
+- `src/app/(app)/recipes/new/page.tsx` now renders the shared `src/components/recipe-form.tsx` in create mode.
+- The reusable form provides the manual-entry UI for title, description, servings, prep time, cook time, ingredients, and instructions.
 - The form supports repeatable ingredient and instruction rows with add/remove actions.
 - Submission is wired to `POST /api/recipes`.
 - The submit flow shows inline validation/server errors, disables repeated submission while saving, and redirects to the created recipe detail page on success.
@@ -595,8 +596,12 @@ Allow a user to update an existing recipe using the same general form structure 
 - Updated data appears on detail page after save.
 
 #### Current status
-- Route scaffold exists at `src/app/(app)/recipes/[id]/edit/page.tsx`.
-- The page currently renders a placeholder only; form reuse and update submission are still pending.
+- Implemented.
+- `src/app/(app)/recipes/[id]/edit/page.tsx` now renders a real server component edit page instead of a placeholder.
+- The page reads the authenticated session on the server, queries the database directly with Drizzle, and scopes recipe lookup to the current user's `user_id`.
+- Missing or non-owned recipes resolve to the signed-in-area not-found UI at `src/app/(app)/not-found.tsx` rather than exposing other users' data.
+- The page pre-fills the shared `src/components/recipe-form.tsx` with the existing recipe title, description, servings, prep time, cook time, ingredients, and instructions.
+- The reused form submits updates through `PUT /api/recipes/:id`, shows loading and error state during save, and redirects back to the recipe detail page on success.
 
 ---
 
@@ -1022,9 +1027,9 @@ Review all major flows and improve error copy for:
 - Partially complete already.
 - Google sign-in action has a loading state in `src/components/signin-button.tsx`.
 - Sign-out action has a loading state in `src/components/signout-button.tsx`.
-- Recipe create now has a loading state in `src/components/new-recipe-form.tsx`.
+- Recipe create and edit now share loading-state handling in `src/components/recipe-form.tsx`.
 - Recipe delete now has a loading state in `src/components/delete-recipe-button.tsx`.
-- Loading states for recipe edit/import are still pending.
+- Loading states for recipe import are still pending.
 
 #### Objective
 Make the UI feel responsive and prevent duplicate actions.
