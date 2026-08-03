@@ -48,6 +48,7 @@ Current implementation notes:
 - An authenticated route-group layout exists at `src/app/(app)/layout.tsx`.
 - The recipe list page at `/recipes` now renders a real server component dashboard backed by a Drizzle query scoped to the authenticated user.
 - The new recipe page at `/recipes/new` now renders a real manual-entry screen with a client form component at `src/components/new-recipe-form.tsx`.
+- Global form-control styling in `src/app/globals.css` now improves text and placeholder contrast for inputs and textareas.
 - The recipe detail page at `/recipes/[id]` now renders a real server component detail view scoped to the authenticated user.
 - Custom not-found UIs now exist at `src/app/not-found.tsx` for app-wide 404s and `src/app/(app)/not-found.tsx` for signed-in recipe-area missing-resource states.
 - Placeholder pages still exist for `/recipes/import` and `/recipes/[id]/edit`.
@@ -256,6 +257,7 @@ Phase 1 progress so far:
 - A shared authenticated app shell and navigation scaffold now exist.
 - The recipe list page is now implemented as a real authenticated dashboard with an empty state and recipe links.
 - The new recipe page now supports manual creation through `src/components/new-recipe-form.tsx`, including repeatable ingredient/instruction rows, loading state, validation error display, and redirect on success.
+- Global form-control styling in `src/app/globals.css` now improves text and placeholder contrast for inputs and textareas.
 - The recipe detail page is now implemented as a real authenticated view with recipe metadata, ingredient/instruction lists, and delete initiation.
 - Dedicated app-wide and authenticated-area not-found pages now exist for missing routes and missing recipe resources.
 - Placeholder pages still exist for recipe edit and import flows under the App Router.

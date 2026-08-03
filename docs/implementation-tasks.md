@@ -535,6 +535,7 @@ Build a form with fields for:
 - The form supports repeatable ingredient and instruction rows with add/remove actions.
 - Submission is wired to `POST /api/recipes`.
 - The submit flow shows inline validation/server errors, disables repeated submission while saving, and redirects to the created recipe detail page on success.
+- Global form-control styling in `src/app/globals.css` now improves text and placeholder contrast for inputs and textareas used by the manual-entry UI.
 - Manual end-to-end verification is still pending.
 
 ---
@@ -1098,6 +1099,10 @@ Do not add:
 
 #### Acceptance criteria
 - App is clean, readable, and responsive enough for basic use.
+
+#### Current status
+- Partially complete.
+- Global form-control styling in `src/app/globals.css` now improves text and placeholder contrast for inputs and textareas.
 
 ---
 
