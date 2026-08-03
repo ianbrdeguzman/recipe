@@ -289,11 +289,12 @@ Create validation rules for recipe creation and update.
 
 #### Current status
 - Partially complete.
-- Recipe create validation now exists in `src/lib/recipes/schema.ts`.
+- Shared recipe input validation now exists in `src/lib/recipes/schema.ts` as `recipeInputSchema`.
+- `createRecipeSchema` and `updateRecipeSchema` now reuse the same validation rules.
 - The schema trims required string fields, rejects empty titles, rejects blank ingredient/instruction rows, and enforces positive integer numeric fields when provided.
 - Recipe insert mapping now exists in `src/lib/recipes/mappers.ts`.
 - Optional text is normalized before insert so blank descriptions are stored as `null`.
-- Update/import-specific schema reuse is still pending.
+- Import-specific schema reuse is still pending.
 
 ---
 
@@ -354,6 +355,14 @@ Create:
 - Endpoint does not expose other users' data.
 - Response is stable and usable by the UI.
 
+#### Current status
+- Implemented.
+- `GET /api/recipes` now exists at `src/app/api/recipes/route.ts`.
+- The endpoint requires an authenticated Better Auth session.
+- Recipes are filtered by the current user's `user_id` only.
+- Results are ordered by `updated_at` descending.
+- The endpoint currently returns full recipe records, which is acceptable for now and keeps the implementation simple.
+
 ---
 
 ### Task 1.8: Implement recipe detail API
@@ -375,6 +384,13 @@ Create:
 - Owner can fetch their recipe.
 - Non-owner cannot access someone else's recipe.
 - Missing recipes return a clear not-found response.
+
+#### Current status
+- Implemented.
+- `GET /api/recipes/:id` now exists at `src/app/api/recipes/[id]/route.ts`.
+- The endpoint requires an authenticated Better Auth session.
+- Recipe lookup is scoped to both the requested `id` and the current user's `user_id`.
+- Missing or non-owned recipes return `404`, so the API does not reveal whether another user's record exists.
 
 ---
 
@@ -398,6 +414,15 @@ Create:
 - Owner can update a recipe.
 - Invalid data is rejected.
 - Non-owner cannot update another user's recipe.
+
+#### Current status
+- Implemented.
+- `PUT /api/recipes/:id` now exists at `src/app/api/recipes/[id]/route.ts`.
+- The endpoint requires an authenticated Better Auth session.
+- Request bodies are validated with `updateRecipeSchema`.
+- Updates are scoped to the current user's recipe only.
+- Missing or non-owned recipes return `404`.
+- `updated_at` is handled by the database schema via the Drizzle `$onUpdate` configuration.
 
 ---
 
@@ -423,6 +448,14 @@ Create:
 - Owner can delete a recipe.
 - Non-owner cannot delete another user's recipe.
 - Deleted recipes no longer appear in recipe list.
+
+#### Current status
+- Implemented.
+- `DELETE /api/recipes/:id` now exists at `src/app/api/recipes/[id]/route.ts`.
+- The endpoint requires an authenticated Better Auth session.
+- Deletes are scoped to the current user's recipe only.
+- Missing or non-owned recipes return `404`.
+- The endpoint returns a simple success response on deletion.
 
 ---
 
