@@ -8,12 +8,6 @@ import { db } from "@/lib/db";
 import { recipe } from "@/lib/db/schema";
 import { RecipeForm } from "@/components/recipe-form";
 
-type EditRecipePageProps = {
-  params: Promise<{
-    id: string;
-  }>;
-};
-
 async function getRecipeForCurrentUser(recipeId: string) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -35,7 +29,9 @@ async function getRecipeForCurrentUser(recipeId: string) {
   return selectedRecipe;
 }
 
-export default async function EditRecipePage({ params }: EditRecipePageProps) {
+export default async function EditRecipePage({
+  params,
+}: PageProps<"/recipes/[id]/edit">) {
   const { id } = await params;
   const selectedRecipe = await getRecipeForCurrentUser(id);
 

@@ -8,12 +8,6 @@ import { db } from "@/lib/db";
 import { recipe } from "@/lib/db/schema";
 import { DeleteRecipeButton } from "@/components/delete-recipe-button";
 
-type RecipeDetailPageProps = {
-  params: Promise<{
-    id: string;
-  }>;
-};
-
 async function getRecipeForCurrentUser(recipeId: string) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -37,7 +31,7 @@ async function getRecipeForCurrentUser(recipeId: string) {
 
 export default async function RecipeDetailPage({
   params,
-}: RecipeDetailPageProps) {
+}: PageProps<"/recipes/[id]">) {
   const { id } = await params;
   const selectedRecipe = await getRecipeForCurrentUser(id);
 
