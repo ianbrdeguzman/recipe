@@ -221,6 +221,7 @@ Create a sign-in page or entry point that includes:
 - The auth route handler exists at `src/app/api/auth/[...all]/route.ts`.
 - The client helper exists at `src/lib/auth/client.ts`.
 - `src/components/signin-button.tsx` and `src/components/signout-button.tsx` are implemented.
+- `src/app/page.tsx` now includes a plain-language auth error message area driven by supported `error` query params such as required sign-in, failed sign-in, canceled sign-in, and failed sign-out.
 - Sign-out refreshes the current route so server-rendered session state updates.
 - Sign-in and sign-out both have basic loading states.
 - Base route protection now exists in `src/app/(app)/layout.tsx`, which redirects unauthenticated users away from recipe routes.
@@ -626,6 +627,12 @@ Handle at least these cases:
 #### Acceptance criteria
 - Main user flows fail gracefully.
 - Errors are visible and actionable.
+
+#### Current status
+- Partially complete.
+- `src/app/page.tsx` now reads supported `error` query params and shows plain-language auth messages on the public landing page.
+- The landing page currently covers required sign-in, failed sign-in, canceled sign-in, and failed sign-out messaging.
+- Recipe-form, API, and broader network-error handling work is still pending for full Task 1.15 coverage.
 
 ---
 

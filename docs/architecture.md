@@ -45,6 +45,7 @@ A single web app with simple pages:
 Current implementation notes:
 - The app uses the Next.js App Router.
 - The homepage (`src/app/page.tsx`) now acts as a public landing page with sign-in/session UI.
+- The homepage now also reads auth-related query params and shows plain-language error messages for cases like required sign-in, failed sign-in, canceled sign-in, and failed sign-out.
 - An authenticated route-group layout exists at `src/app/(app)/layout.tsx`.
 - The recipe list page at `/recipes` now renders a real server component dashboard backed by a Drizzle query scoped to the authenticated user.
 - The new recipe page at `/recipes/new` now renders a real manual-entry screen with a client form component at `src/components/new-recipe-form.tsx`.
@@ -55,6 +56,7 @@ Current implementation notes:
 - Sign-in and sign-out are handled by client components in `src/components/`.
 - Server-rendered session state is read in Server Components with `auth.api.getSession({ headers: await headers() })`.
 - Unauthenticated users are redirected from recipe routes back to `/`.
+- The public landing page can display auth error states when redirects or auth flows include a supported `error` query param.
 
 ### Backend
 A simple server with REST endpoints:
@@ -250,6 +252,7 @@ Phase 1 progress so far:
 - Google sign-in is wired through the Better Auth client.
 - Sign-out is implemented.
 - Basic loading states exist for sign-in and sign-out buttons.
+- The public landing page now surfaces plain-language auth error messages from supported `error` query params.
 - Server-side session reading is working on the homepage and authenticated layout.
 - Drizzle schema and paths have been moved under `src/lib/db`.
 - The initial recipe data model is now present in `src/lib/db/schema.ts`.
