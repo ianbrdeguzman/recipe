@@ -724,6 +724,15 @@ Create:
 - Unauthenticated access is rejected.
 - Invalid URLs return a clear error.
 
+#### Current status
+- Implemented as a skeleton.
+- `POST /api/recipes/import` now exists at `src/app/api/recipes/import/route.ts`.
+- The endpoint requires an authenticated Better Auth session.
+- Invalid JSON request bodies return `400`.
+- Request bodies are validated with `importRecipeSchema` from `src/lib/recipes/schema.ts`.
+- The schema now rejects invalid URLs and restricts imports to `http` and `https` protocols only.
+- Full extraction, persistence, and success response payload wiring are still pending.
+
 ---
 
 ### Task 2.3: Add backend URL fetch utility with safety limits
