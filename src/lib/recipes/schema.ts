@@ -18,3 +18,26 @@ export const createRecipeSchema = recipeInputSchema;
 export const updateRecipeSchema = recipeInputSchema;
 
 export type RecipeInput = z.infer<typeof recipeInputSchema>;
+
+export const importRecipeSchema = z.object({
+  url: z
+    .string()
+    .trim()
+    .min(1, "URL is required.")
+    .refine((value) => {
+      try {
+        new URL(value);
+        return true;
+      } catch {
+        return false;
+      }
+    }, "Enter a valid URL.")
+    .refine((value) => {
+      try {
+        const url = new URL(value);
+        return url.protocol === "http:" || url.protocol === "https:";
+      } catch {
+        return false;
+      }
+    }, "Only http and https URLs are supported."),
+});
