@@ -54,6 +54,8 @@ Current implementation notes:
 - Custom not-found UIs now exist at `src/app/not-found.tsx` for app-wide 404s and `src/app/(app)/not-found.tsx` for signed-in recipe-area missing-resource states.
 - Placeholder pages still exist for `/recipes/import` and `/recipes/[id]/edit`.
 - Sign-in and sign-out are handled by client components in `src/components/`.
+- The sign-in button now uses the task language "Continue with Google", redirects successful sign-in to `/recipes`, and passes an auth failure callback back to `/`.
+- Both auth buttons now handle unexpected client-side initiation failures with inline error messages in addition to loading states.
 - Server-rendered session state is read in Server Components with `auth.api.getSession({ headers: await headers() })`.
 - Unauthenticated users are redirected from recipe routes back to `/`.
 - The public landing page can display auth error states when redirects or auth flows include a supported `error` query param.
@@ -251,7 +253,8 @@ Phase 1 progress so far:
 - Better Auth is installed and configured.
 - Google sign-in is wired through the Better Auth client.
 - Sign-out is implemented.
-- Basic loading states exist for sign-in and sign-out buttons.
+- Sign-in and sign-out buttons now have loading states plus inline fallback error handling for unexpected client-side failures.
+- The sign-in button label now reads "Continue with Google" and sends Better Auth success/failure redirects to `/recipes` and `/?error=auth-failed`.
 - The public landing page now surfaces plain-language auth error messages from supported `error` query params.
 - Server-side session reading is working on the homepage and authenticated layout.
 - Drizzle schema and paths have been moved under `src/lib/db`.
