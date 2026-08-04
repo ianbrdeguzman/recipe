@@ -684,8 +684,11 @@ Create a page with:
 - Loading and error states are visible.
 
 #### Current status
-- Route scaffold exists at `src/app/(app)/recipes/import/page.tsx`.
-- The page currently renders a placeholder only; the URL form and import UX are still pending.
+- Partially complete.
+- `src/app/(app)/recipes/import/page.tsx` no longer renders a placeholder.
+- The page now includes a styled draft UI with a URL input, import button, back-to-recipes action, loading-state placeholder area, error-state placeholder area, and manual-entry fallback link.
+- The page styling now matches the existing manual-entry recipe pages more closely.
+- Client-side submission behavior, real loading/error handling, and redirect-on-success wiring are still pending.
 
 ---
 
