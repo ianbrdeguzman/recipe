@@ -41,6 +41,8 @@ describe("POST /api/recipes/import", () => {
     vi.mocked(importRecipeFromUrl).mockResolvedValue({
       id: "recipe-1",
       userId: "user-1",
+      importedRecipeId: null,
+      normalizedSourceUrl: null,
       sourceType: "url",
       sourceUrl: "https://example.com/recipe",
       title: "Pancakes",
