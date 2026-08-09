@@ -85,6 +85,12 @@ Current implementation notes:
 ### AI extraction
 Backend fetches page content from a URL, sends cleaned text/HTML to an AI model, asks for structured recipe JSON, validates it, then stores it.
 
+Current implementation notes:
+- `src/lib/recipes/import/extract-recipe.ts` now uses the OpenAI Responses API `parse()` path instead of prompt-only JSON parsing.
+- Recipe extraction now sends an explicit strict `json_schema` response format with a top-level object shape.
+- All recipe fields are required in the structured output contract, with optional app fields represented as nullable values.
+- Extracted output is still validated again with `recipeExtractionSchema` before persistence.
+
 ## Suggested Stack
 Keep stack minimal and common:
 - **Frontend**: Next.js
@@ -111,9 +117,9 @@ If preferred, this can also be a plain React frontend plus Node/Express backend,
 2. Frontend calls `POST /api/recipes/import`.
 3. Backend classifies the URL source.
 4. For normal webpage URLs, backend fetches readable content through Jina Reader.
-5. Backend sends the normalized content to AI with a strict schema.
-6. AI returns structured recipe fields.
-7. Backend validates result.
+5. Backend sends the normalized content to AI with a strict structured-output schema.
+6. AI returns parsed structured recipe fields.
+7. Backend validates the parsed result against the app recipe schema.
 8. Backend stores recipe with `sourceType="url"` and the original `sourceUrl`.
 9. User sees imported recipe and can edit it.
 
@@ -268,6 +274,7 @@ Phase 1 progress so far:
 - Dedicated app-wide and authenticated-area not-found pages now exist for missing routes and missing recipe resources.
 - The import API route is now implemented as a thin orchestrator in `src/app/api/recipes/import/route.ts`.
 - Webpage import modules now live under `src/lib/recipes/import/` for source detection, Jina fetching, extraction, persistence, and orchestration.
+- Recipe extraction now uses OpenAI Responses structured outputs with an explicit JSON schema and app-side validation.
 - Social-platform URLs are intentionally rejected for now until dedicated importers are added.
 - The import page UX is still pending, but the backend import pipeline now exists.
 - A repeatable mock-data seed path now exists via `pnpm db:seed` for the fixed test user `nmvtmxLrMHiXCMlpFH5jn9DDVYGpAonU`.

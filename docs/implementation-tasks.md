@@ -851,6 +851,13 @@ Create a strict schema for the recipe data expected back from the AI model.
 - Schema is explicit and reusable.
 - AI result can be validated against this schema before saving.
 
+#### Current status
+- Implemented.
+- `src/lib/recipes/import/extract-recipe.ts` now sends an explicit strict `json_schema` response format to the OpenAI Responses API.
+- The structured-output contract requires all recipe fields to be present, with optional app fields represented as nullable values.
+- The schema shape aligns with the existing recipe import validation expectations for title, ingredients, and instructions.
+- The extractor tests now assert that the outbound schema is a top-level object and that all expected properties are included in the required list.
+
 ---
 
 ### Task 2.7: Implement AI extraction service
@@ -885,6 +892,13 @@ The prompt should instruct the model to return only the recipe fields defined in
 - Response format is constrained and predictable.
 - Failure cases are handled cleanly.
 
+#### Current status
+- Implemented for the webpage import path.
+- `src/lib/recipes/import/extract-recipe.ts` now calls `client.responses.parse(...)` instead of relying on prompt-only JSON output.
+- The extractor uses structured outputs rather than `JSON.parse(response.output_text)`.
+- Missing structured output now raises `RecipeExtractionError`.
+- Invalid structured recipe data still raises `RecipeValidationError` after app-side schema validation.
+
 ---
 
 ### Task 2.8: Validate extracted recipe data before saving
@@ -911,6 +925,12 @@ If validation fails:
 #### Acceptance criteria
 - Invalid AI output is never saved.
 - Valid output is normalized into storage shape.
+
+#### Current status
+- Implemented for the extraction boundary.
+- Parsed model output is validated with `recipeExtractionSchema` before persistence.
+- The import path rejects missing structured output and schema-invalid recipe payloads before save.
+- Regression tests cover both the missing-output case and invalid instruction-list case.
 
 ---
 
