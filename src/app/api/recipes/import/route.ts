@@ -1,4 +1,6 @@
 import { auth } from "@/lib/auth";
+import { toImportErrorResponse } from "@/lib/recipes/import/errors";
+import { importRecipeFromUrl } from "@/lib/recipes/import/import-recipe-from-url";
 import { importRecipeSchema } from "@/lib/recipes/schema";
 import { headers } from "next/headers";
 
@@ -31,9 +33,14 @@ export async function POST(request: Request) {
     );
   }
 
-  // TODO: extract recipe
-  // TODO: save recipe
-  // TODO: return saved recipe
+  try {
+    const createdRecipe = await importRecipeFromUrl({
+      url: result.data.url,
+      userId: session.user.id,
+    });
 
-  return Response.json({ success: true }, { status: 200 });
+    return Response.json(createdRecipe, { status: 200 });
+  } catch (error) {
+    return toImportErrorResponse(error);
+  }
 }
