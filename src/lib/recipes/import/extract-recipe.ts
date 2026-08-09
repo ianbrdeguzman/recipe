@@ -4,6 +4,39 @@ import { recipeExtractionSchema } from "./extraction-schema";
 import { RecipeExtractionError, RecipeValidationError } from "./errors";
 
 const DEFAULT_MODEL = "gpt-5-mini";
+const recipeExtractionResponseFormat = {
+  type: "json_schema" as const,
+  name: "recipe_extraction",
+  strict: true,
+  schema: {
+    type: "object",
+    additionalProperties: false,
+    required: [
+      "title",
+      "description",
+      "servings",
+      "prepTimeMinutes",
+      "cookTimeMinutes",
+      "ingredients",
+      "instructions",
+    ],
+    properties: {
+      title: { type: "string" },
+      description: { type: ["string", "null"] },
+      servings: { type: ["integer", "null"] },
+      prepTimeMinutes: { type: ["integer", "null"] },
+      cookTimeMinutes: { type: ["integer", "null"] },
+      ingredients: {
+        type: "array",
+        items: { type: "string" },
+      },
+      instructions: {
+        type: "array",
+        items: { type: "string" },
+      },
+    },
+  },
+};
 
 export async function extractRecipe({
   sourceUrl,
@@ -21,7 +54,7 @@ export async function extractRecipe({
   }
 
   const client = new OpenAI({ apiKey });
-  const response = await client.responses.create({
+  const response = await client.responses.parse({
     model,
     input: [
       {
@@ -29,7 +62,7 @@ export async function extractRecipe({
         content: [
           {
             type: "input_text",
-            text: "Extract a recipe from webpage text. Return JSON only. Do not invent values. Use null for missing optional fields. Ingredients and instructions must be arrays.",
+            text: "Extract a recipe from webpage text. Do not invent values. Use null for missing optional fields. Ingredients and instructions must be arrays.",
           },
         ],
       },
@@ -43,14 +76,15 @@ export async function extractRecipe({
         ],
       },
     ],
+    text: {
+      format: recipeExtractionResponseFormat,
+    },
   });
 
-  let parsed: unknown;
+  const parsed = response.output_parsed;
 
-  try {
-    parsed = JSON.parse(response.output_text);
-  } catch {
-    throw new RecipeExtractionError("Model returned non-JSON output");
+  if (!parsed) {
+    throw new RecipeExtractionError("Model returned no structured output");
   }
 
   const result = recipeExtractionSchema.safeParse(parsed);
