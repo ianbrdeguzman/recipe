@@ -15,14 +15,15 @@ function getAuthErrorMessage(error?: string) {
   switch (error) {
     case "auth-required":
       return "Please sign in to view your recipes.";
-    case "auth-failed":
-      return "Google sign-in did not complete. Please try again.";
     case "auth-canceled":
+    case "access_denied":
       return "Google sign-in was canceled.";
     case "signout-failed":
       return "Could not sign out right now. Please try again.";
     default:
-      return null;
+      return error
+        ? "Google sign-in did not complete. Please try again."
+        : null;
   }
 }
 
