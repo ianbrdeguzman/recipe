@@ -19,6 +19,15 @@ function toRecipeFields(input: RecipeInput) {
   };
 }
 
+function isUniqueViolation(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: string }).code === "23505"
+  );
+}
+
 export async function findUserRecipeByNormalizedUrl({
   userId,
   normalizedSourceUrl,
@@ -111,6 +120,17 @@ export async function createUserRecipeFromImportedRecipe({
 
     return createdRecipe;
   } catch (error) {
+    if (isUniqueViolation(error)) {
+      const existingRecipe = await findUserRecipeByNormalizedUrl({
+        userId,
+        normalizedSourceUrl,
+      });
+
+      if (existingRecipe) {
+        return existingRecipe;
+      }
+    }
+
     throw new RecipePersistenceError(
       error instanceof Error ? error.message : "User recipe insert failed",
     );

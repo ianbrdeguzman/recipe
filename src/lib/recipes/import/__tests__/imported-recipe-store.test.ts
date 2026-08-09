@@ -117,4 +117,58 @@ describe("createUserRecipeFromImportedRecipe", () => {
     expect(result.importedRecipeId).toBe("imported-1");
     expect(result.sourceUrl).toBe("https://example.com/recipe");
   });
+
+  it("re-queries and returns the existing user recipe when insert loses the uniqueness race", async () => {
+    const existingRecipe = {
+      id: "recipe-1",
+      userId: "user-1",
+      importedRecipeId: "imported-1",
+      normalizedSourceUrl: "https://example.com/recipe",
+      sourceType: "url",
+      sourceUrl: "https://example.com/recipe",
+      title: "Pancakes",
+      description: null,
+      servings: 4,
+      prepTimeMinutes: 10,
+      cookTimeMinutes: 15,
+      ingredients: ["1 cup flour"],
+      instructions: ["Mix ingredients"],
+    };
+
+    const duplicateError = Object.assign(
+      new Error("duplicate key value violates unique constraint"),
+      {
+        code: "23505",
+      },
+    );
+
+    const returning = vi.fn().mockRejectedValue(duplicateError);
+    const values = vi.fn().mockReturnValue({ returning });
+    const where = vi.fn().mockResolvedValue([existingRecipe]);
+    const from = vi.fn().mockReturnValue({ where });
+
+    insertMock.mockReturnValue({ values });
+    selectMock.mockReturnValue({ from });
+
+    const result = await createUserRecipeFromImportedRecipe({
+      userId: "user-1",
+      normalizedSourceUrl: "https://example.com/recipe",
+      canonicalRecipe: {
+        id: "imported-1",
+        normalizedSourceUrl: "https://example.com/recipe",
+        originalSourceUrl: "https://example.com/recipe/",
+        title: "Pancakes",
+        description: null,
+        servings: 4,
+        prepTimeMinutes: 10,
+        cookTimeMinutes: 15,
+        ingredients: ["1 cup flour"],
+        instructions: ["Mix ingredients"],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
+
+    expect(result).toMatchObject({ id: "recipe-1" });
+  });
 });

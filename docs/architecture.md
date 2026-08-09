@@ -79,6 +79,9 @@ Current implementation notes:
 - The runtime database client lives in `src/lib/db/index.ts` and reads `DATABASE_URL`.
 - The Postgres client uses `prepare: false` for transaction-pool compatibility.
 - The initial `recipe` table and `recipe_source_type` enum have been added to the schema.
+- Imported recipe URLs now normalize before lookup and persistence.
+- A shared `imported_recipe` table now stores canonical extracted payloads keyed by normalized URL.
+- The `recipe` table now stores one editable per-user copy per normalized URL and can reference its canonical imported source row.
 - An idempotent recipe seed script now exists at `src/scripts/seed-recipes.ts`.
 - The seed script is exposed as `pnpm db:seed` and inserts mock recipes for the fixed user ID `nmvtmxLrMHiXCMlpFH5jn9DDVYGpAonU` when those titles do not already exist.
 
@@ -120,8 +123,10 @@ If preferred, this can also be a plain React frontend plus Node/Express backend,
 5. Backend sends the normalized content to AI with a strict structured-output schema.
 6. AI returns parsed structured recipe fields.
 7. Backend validates the parsed result against the app recipe schema.
-8. Backend stores recipe with `sourceType="url"` and the original `sourceUrl`.
-9. User sees imported recipe and can edit it.
+8. Backend normalizes the URL and checks for an existing saved recipe for that user.
+9. If no user copy exists, backend reuses a canonical cached import when available, or imports upstream once on cache miss.
+10. Backend stores a user-owned editable recipe with `sourceType="url"` and the normalized `sourceUrl`.
+11. User sees imported recipe and can edit it.
 
 ## Minimal Data Model
 
@@ -145,9 +150,25 @@ Current Better Auth schema in `src/lib/db/schema.ts` includes:
 
 Google OAuth is the only configured provider right now.
 
+### ImportedRecipe
+- `id`
+- `normalized_source_url` (unique)
+- `original_source_url`
+- `title`
+- `description` (nullable)
+- `servings` (nullable)
+- `prep_time_minutes` (nullable)
+- `cook_time_minutes` (nullable)
+- `ingredients` (JSON or text array)
+- `instructions` (JSON or text array)
+- `created_at`
+- `updated_at`
+
 ### Recipe
 - `id`
 - `user_id`
+- `imported_recipe_id` (nullable)
+- `normalized_source_url` (nullable)
 - `source_type` (`manual` | `url`)
 - `source_url` (nullable)
 - `title`
@@ -206,6 +227,12 @@ Backend must validate AI output before saving:
 - Ignore extra fields
 
 If validation fails, return an error and ask user to try manual entry.
+
+### Import cache behavior
+- Normalize the incoming URL before any lookup.
+- Return the existing user-owned recipe if that normalized URL is already saved by the same user.
+- Reuse a canonical cached `imported_recipe` across users before making any upstream Jina/OpenAI request.
+- Recover gracefully from same-user duplicate insert races by re-querying the existing saved recipe.
 
 ## Security and Safety
 Keep only the basics:

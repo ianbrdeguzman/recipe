@@ -729,13 +729,13 @@ Create:
 - Invalid URLs return a clear error.
 
 #### Current status
-- Implemented as a skeleton.
+- Implemented.
 - `POST /api/recipes/import` now exists at `src/app/api/recipes/import/route.ts`.
 - The endpoint requires an authenticated Better Auth session.
 - Invalid JSON request bodies return `400`.
 - Request bodies are validated with `importRecipeSchema` from `src/lib/recipes/schema.ts`.
 - The schema now rejects invalid URLs and restricts imports to `http` and `https` protocols only.
-- Full extraction, persistence, and success response payload wiring are still pending.
+- The route remains orchestration-only and delegates cache-aware import logic to `src/lib/recipes/import/import-recipe-from-url.ts`.
 
 ---
 
@@ -951,6 +951,8 @@ When import succeeds:
 - Imported recipe is stored successfully.
 - Recipe is associated with the logged-in user.
 - Source URL is preserved.
+- Repeated import of the same normalized URL by the same user returns the existing saved recipe instead of creating a duplicate.
+- A canonical cached import is reused across users before any new upstream fetch/extraction work is done.
 
 ---
 
@@ -963,14 +965,17 @@ Connect all import pieces into one request flow.
 `POST /api/recipes/import` now:
 1. authenticates the user
 2. validates URL input
-3. classifies the URL source
-4. rejects unsupported social-platform URLs with a controlled error
-5. fetches webpage content through Jina Reader
-6. normalizes and bounds the readable content
-7. calls AI extraction with a strict schema
-8. validates the extracted result
-9. saves the recipe with `sourceType="url"` and the original `sourceUrl`
-10. returns the created recipe
+3. normalizes the URL
+4. returns the existing user recipe when that normalized URL is already saved
+5. reuses a canonical cached import when another user already imported that normalized URL
+6. otherwise classifies the URL source
+7. rejects unsupported social-platform URLs with a controlled error
+8. fetches webpage content through Jina Reader
+9. normalizes and bounds the readable content
+10. calls AI extraction with a strict schema
+11. validates the extracted result
+12. saves one canonical cached import plus one user-owned recipe copy
+13. returns the user-owned recipe
 
 #### Error cases to handle
 - invalid URL
