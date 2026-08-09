@@ -940,17 +940,17 @@ When import succeeds:
 Connect all import pieces into one request flow.
 
 #### Final endpoint behavior
-`POST /api/recipes/import` should:
-1. authenticate user
-2. validate URL input
-3. fetch webpage content
-4. check for recipe JSON-LD
-5. use JSON-LD first when possible
-6. fall back to readable content when needed
-7. call AI extraction with strict schema
-8. validate extracted result
-9. save recipe
-10. return created recipe
+`POST /api/recipes/import` now:
+1. authenticates the user
+2. validates URL input
+3. classifies the URL source
+4. rejects unsupported social-platform URLs with a controlled error
+5. fetches webpage content through Jina Reader
+6. normalizes and bounds the readable content
+7. calls AI extraction with a strict schema
+8. validates the extracted result
+9. saves the recipe with `sourceType="url"` and the original `sourceUrl`
+10. returns the created recipe
 
 #### Error cases to handle
 - invalid URL
@@ -963,8 +963,9 @@ Connect all import pieces into one request flow.
 - validation failure
 
 #### Acceptance criteria
-- Full import flow works from a real URL.
+- Full webpage import flow works from a real URL.
 - Failure cases return controlled messages.
+- Unsupported Instagram/YouTube/TikTok URLs return a controlled error.
 - Endpoint remains readable and not overly complex.
 
 ---
@@ -1000,13 +1001,12 @@ Before marking Phase 2 complete, verify:
 - User can paste a valid recipe URL.
 - Import endpoint rejects invalid URLs.
 - Import endpoint rejects unauthenticated requests.
-- Page fetch works for a normal recipe URL.
-- JSON-LD path works when present.
-- Fallback content path works when JSON-LD is absent.
+- Jina Reader fetch works for a normal recipe URL.
 - AI extraction returns recipe data.
 - Invalid AI output is not saved.
 - Valid imported recipe appears in list and detail pages.
 - Source URL is stored on imported recipe.
+- Instagram/YouTube/TikTok URLs return a controlled unsupported response.
 
 ---
 

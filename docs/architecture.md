@@ -109,14 +109,12 @@ If preferred, this can also be a plain React frontend plus Node/Express backend,
 ### 2. Import recipe from URL
 1. User pastes recipe URL.
 2. Frontend calls `POST /api/recipes/import`.
-3. Backend fetches the page.
-4. Backend extracts useful content:
-   - Prefer JSON-LD recipe data if present
-   - Otherwise use main page content
-5. Backend sends content to AI with a strict schema.
+3. Backend classifies the URL source.
+4. For normal webpage URLs, backend fetches readable content through Jina Reader.
+5. Backend sends the normalized content to AI with a strict schema.
 6. AI returns structured recipe fields.
 7. Backend validates result.
-8. Backend stores recipe.
+8. Backend stores recipe with `sourceType="url"` and the original `sourceUrl`.
 9. User sees imported recipe and can edit it.
 
 ## Minimal Data Model
@@ -178,10 +176,11 @@ Google OAuth is the only configured provider right now.
 
 ### Input strategy
 Keep it simple:
-1. Fetch HTML from the URL.
-2. Check for recipe JSON-LD first.
-3. If JSON-LD is missing or poor quality, extract main readable content.
+1. Classify the incoming URL by source type.
+2. For webpage URLs, fetch readable content from Jina Reader.
+3. Normalize the returned text and reject empty or unusable content.
 4. Send only relevant content to the AI model.
+5. Reserve Instagram, YouTube, and TikTok for future dedicated importers.
 
 ### Prompting
 Ask the model to return only structured JSON matching the recipe schema:
@@ -235,7 +234,8 @@ Minimal expectations:
   - Better Auth secret
   - `GOOGLE_CLIENT_ID`
   - `GOOGLE_CLIENT_SECRET`
-  - AI API key
+  - `OPENAI_API_KEY`
+  - `OPENAI_RECIPE_IMPORT_MODEL` (optional override)
 
 Note: the current auth config explicitly reads `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` from environment variables.
 
@@ -266,7 +266,10 @@ Phase 1 progress so far:
 - Global form-control styling in `src/app/globals.css` now improves text and placeholder contrast for inputs and textareas.
 - The recipe detail page is now implemented as a real authenticated view with recipe metadata, ingredient/instruction lists, and delete initiation.
 - Dedicated app-wide and authenticated-area not-found pages now exist for missing routes and missing recipe resources.
-- Placeholder pages still exist for recipe edit and import flows under the App Router.
+- The import API route is now implemented as a thin orchestrator in `src/app/api/recipes/import/route.ts`.
+- Webpage import modules now live under `src/lib/recipes/import/` for source detection, Jina fetching, extraction, persistence, and orchestration.
+- Social-platform URLs are intentionally rejected for now until dedicated importers are added.
+- The import page UX is still pending, but the backend import pipeline now exists.
 - A repeatable mock-data seed path now exists via `pnpm db:seed` for the fixed test user `nmvtmxLrMHiXCMlpFH5jn9DDVYGpAonU`.
 
 ### Phase 2
