@@ -41,6 +41,8 @@ describe("POST /api/recipes/import", () => {
     vi.mocked(importRecipeFromUrl).mockResolvedValue({
       id: "recipe-1",
       userId: "user-1",
+      importedRecipeId: null,
+      normalizedSourceUrl: null,
       sourceType: "url",
       sourceUrl: "https://example.com/recipe",
       title: "Pancakes",
@@ -63,5 +65,41 @@ describe("POST /api/recipes/import", () => {
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({ id: "recipe-1" });
+  });
+
+  it("returns an existing saved recipe when the user imports the same normalized URL again", async () => {
+    vi.mocked(auth.api.getSession).mockResolvedValue({
+      user: { id: "user-1" },
+    } as never);
+    vi.mocked(importRecipeFromUrl).mockResolvedValue({
+      id: "recipe-1",
+      userId: "user-1",
+      importedRecipeId: "imported-1",
+      normalizedSourceUrl: "https://example.com/recipe",
+      sourceType: "url",
+      sourceUrl: "https://example.com/recipe",
+      title: "Pancakes",
+      description: null,
+      servings: 4,
+      prepTimeMinutes: 10,
+      cookTimeMinutes: 15,
+      ingredients: ["1 cup flour"],
+      instructions: ["Mix ingredients"],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as never);
+
+    const response = await POST(
+      new Request("http://localhost/api/recipes/import", {
+        method: "POST",
+        body: JSON.stringify({ url: "https://EXAMPLE.com/recipe/" }),
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      id: "recipe-1",
+      normalizedSourceUrl: "https://example.com/recipe",
+    });
   });
 });

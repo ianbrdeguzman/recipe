@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   pgTable,
   text,
@@ -8,6 +8,7 @@ import {
   pgEnum,
   jsonb,
   integer,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 // BETTER AUTH TABLES
@@ -107,31 +108,80 @@ export const recipeSourceTypeEnum = pgEnum("recipe_source_type", [
   "url",
 ]);
 
-export const recipe = pgTable("recipe", {
-  id: text("id").primaryKey(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  sourceType: recipeSourceTypeEnum("source_type").notNull(),
-  sourceUrl: text("source_url"),
-  title: text("title").notNull(),
-  description: text("description"),
-  servings: integer("servings"),
-  prepTimeMinutes: integer("prep_time_minutes"),
-  cookTimeMinutes: integer("cook_time_minutes"),
-  ingredients: jsonb("ingredients").$type<string[]>().notNull(),
-  instructions: jsonb("instructions").$type<string[]>().notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
-});
+export const importedRecipe = pgTable(
+  "imported_recipe",
+  {
+    id: text("id").primaryKey(),
+    normalizedSourceUrl: text("normalized_source_url").notNull().unique(),
+    originalSourceUrl: text("original_source_url").notNull(),
+    title: text("title").notNull(),
+    description: text("description"),
+    servings: integer("servings"),
+    prepTimeMinutes: integer("prep_time_minutes"),
+    cookTimeMinutes: integer("cook_time_minutes"),
+    ingredients: jsonb("ingredients").$type<string[]>().notNull(),
+    instructions: jsonb("instructions").$type<string[]>().notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("imported_recipe_normalized_source_url_idx").on(
+      table.normalizedSourceUrl,
+    ),
+  ],
+);
+
+export const recipe = pgTable(
+  "recipe",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    importedRecipeId: text("imported_recipe_id").references(
+      () => importedRecipe.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    normalizedSourceUrl: text("normalized_source_url"),
+    sourceType: recipeSourceTypeEnum("source_type").notNull(),
+    sourceUrl: text("source_url"),
+    title: text("title").notNull(),
+    description: text("description"),
+    servings: integer("servings"),
+    prepTimeMinutes: integer("prep_time_minutes"),
+    cookTimeMinutes: integer("cook_time_minutes"),
+    ingredients: jsonb("ingredients").$type<string[]>().notNull(),
+    instructions: jsonb("instructions").$type<string[]>().notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("recipe_user_normalized_source_url_unique")
+      .on(table.userId, table.normalizedSourceUrl)
+      .where(sql`${table.normalizedSourceUrl} is not null`),
+  ],
+);
+
+export const importedRecipeRelations = relations(importedRecipe, ({ many }) => ({
+  recipes: many(recipe),
+}));
 
 export const recipeRelations = relations(recipe, ({ one }) => ({
   user: one(user, {
     fields: [recipe.userId],
     references: [user.id],
+  }),
+  importedRecipe: one(importedRecipe, {
+    fields: [recipe.importedRecipeId],
+    references: [importedRecipe.id],
   }),
 }));
 
@@ -141,4 +191,5 @@ export const schema = {
   account,
   verification,
   recipe,
+  importedRecipe,
 };

@@ -1,4 +1,4 @@
-import type { recipe } from "@/lib/db/schema";
+import type { importedRecipe, recipe } from "@/lib/db/schema";
 import type { RecipeInput } from "@/lib/recipes/schema";
 
 export type ImportSourceType =
@@ -9,6 +9,7 @@ export type ImportSourceType =
   | "unsupported";
 
 export type ImportedRecipe = typeof recipe.$inferSelect;
+export type CanonicalImportedRecipe = typeof importedRecipe.$inferSelect;
 
 export type RecipeImporter = (args: {
   url: URL;
