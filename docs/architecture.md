@@ -52,7 +52,8 @@ Current implementation notes:
 - Global form-control styling in `src/app/globals.css` now improves text and placeholder contrast for inputs and textareas.
 - The recipe detail page at `/recipes/[id]` now renders a real server component detail view scoped to the authenticated user.
 - Custom not-found UIs now exist at `src/app/not-found.tsx` for app-wide 404s and `src/app/(app)/not-found.tsx` for signed-in recipe-area missing-resource states.
-- Placeholder pages still exist for `/recipes/import` and `/recipes/[id]/edit`.
+- The import page at `/recipes/import` now renders a real screen with a client submit form in `src/components/import-recipe-form.tsx`.
+- The recipe edit page at `/recipes/[id]/edit` is still a placeholder.
 - Sign-in and sign-out are handled by client components in `src/components/`.
 - The sign-in button now uses the task language "Continue with Google", redirects successful sign-in to `/recipes`, and passes an auth failure callback back to `/`.
 - Both auth buttons now handle unexpected client-side initiation failures with inline error messages in addition to loading states.
@@ -126,7 +127,8 @@ If preferred, this can also be a plain React frontend plus Node/Express backend,
 8. Backend normalizes the URL and checks for an existing saved recipe for that user.
 9. If no user copy exists, backend reuses a canonical cached import when available, or imports upstream once on cache miss.
 10. Backend stores a user-owned editable recipe with `sourceType="url"` and the normalized `sourceUrl`.
-11. User sees imported recipe and can edit it.
+11. Frontend redirects the user to the imported recipe detail page.
+12. User sees imported recipe and can edit it.
 
 ## Minimal Data Model
 
@@ -303,7 +305,7 @@ Phase 1 progress so far:
 - Webpage import modules now live under `src/lib/recipes/import/` for source detection, Jina fetching, extraction, persistence, and orchestration.
 - Recipe extraction now uses OpenAI Responses structured outputs with an explicit JSON schema and app-side validation.
 - Social-platform URLs are intentionally rejected for now until dedicated importers are added.
-- The import page UX is still pending, but the backend import pipeline now exists.
+- The import page now submits to `POST /api/recipes/import`, shows loading and error states, disables duplicate submits, and redirects to the imported recipe detail page on success.
 - A repeatable mock-data seed path now exists via `pnpm db:seed` for the fixed test user `nmvtmxLrMHiXCMlpFH5jn9DDVYGpAonU`.
 
 ### Phase 2

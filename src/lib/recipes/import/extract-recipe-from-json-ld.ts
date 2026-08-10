@@ -8,7 +8,9 @@ function decodeHtmlEntities(input: string) {
     .replace(/&#39;|&apos;|&#039;/gi, "'")
     .replace(/&lt;/gi, "<")
     .replace(/&gt;/gi, ">")
-    .replace(/&#(\d+);/g, (_, code: string) => String.fromCodePoint(Number(code)))
+    .replace(/&#(\d+);/g, (_, code: string) =>
+      String.fromCodePoint(Number(code)),
+    )
     .replace(/&#x([\da-f]+);/gi, (_, code: string) =>
       String.fromCodePoint(Number.parseInt(code, 16)),
     );
@@ -49,18 +51,21 @@ function parseDurationToMinutes(value: unknown): number | null {
   }
 
   const match = value.match(
-    /^P(?:(?<days>\d+)D)?(?:T(?:(?<hours>\d+)H)?(?:(?<minutes>\d+)M)?(?:(?<seconds>\d+)S)?)?$/i,
+    /^P(?:([\d]+)D)?(?:T(?:([\d]+)H)?(?:([\d]+)M)?(?:([\d]+)S)?)?$/i,
   );
 
-  if (!match?.groups) {
+  if (!match) {
     return null;
   }
 
-  const days = Number.parseInt(match.groups.days ?? "0", 10);
-  const hours = Number.parseInt(match.groups.hours ?? "0", 10);
-  const minutes = Number.parseInt(match.groups.minutes ?? "0", 10);
-  const seconds = Number.parseInt(match.groups.seconds ?? "0", 10);
-  const totalMinutes = days * 24 * 60 + hours * 60 + minutes + Math.ceil(seconds / 60);
+  const [, daysText, hoursText, minutesText, secondsText] = match;
+
+  const days = Number.parseInt(daysText ?? "0", 10);
+  const hours = Number.parseInt(hoursText ?? "0", 10);
+  const minutes = Number.parseInt(minutesText ?? "0", 10);
+  const seconds = Number.parseInt(secondsText ?? "0", 10);
+  const totalMinutes =
+    days * 24 * 60 + hours * 60 + minutes + Math.ceil(seconds / 60);
 
   return totalMinutes > 0 ? totalMinutes : null;
 }
@@ -103,7 +108,9 @@ function collectRecipeNodes(value: unknown): Record<string, unknown>[] {
 
   const node = value as Record<string, unknown>;
   const typeValues = toArray(node["@type"]);
-  const isRecipe = typeValues.some((entry) => normalizeText(entry).toLowerCase() === "recipe");
+  const isRecipe = typeValues.some(
+    (entry) => normalizeText(entry).toLowerCase() === "recipe",
+  );
 
   return [
     ...(isRecipe ? [node] : []),
@@ -136,13 +143,19 @@ function parseJsonLdBlocks(html: string) {
   return parsed;
 }
 
-function toCompleteRecipeInput(node: Record<string, unknown>): RecipeInput | null {
+function toCompleteRecipeInput(
+  node: Record<string, unknown>,
+): RecipeInput | null {
   const title = normalizeText(node.name) || normalizeText(node.headline);
   const servings = parseServings(node.recipeYield);
   const prepTimeMinutes = parseDurationToMinutes(node.prepTime);
   const cookTimeMinutes = parseDurationToMinutes(node.cookTime);
-  const ingredients = parseIngredients(node.recipeIngredient ?? node.ingredients);
-  const instructions = collectInstructionTexts(node.recipeInstructions ?? node.instructions);
+  const ingredients = parseIngredients(
+    node.recipeIngredient ?? node.ingredients,
+  );
+  const instructions = collectInstructionTexts(
+    node.recipeInstructions ?? node.instructions,
+  );
 
   if (
     !title ||
@@ -155,6 +168,7 @@ function toCompleteRecipeInput(node: Record<string, unknown>): RecipeInput | nul
     return null;
   }
 
+  console.log(">>> PASS JSONLD");
   return {
     title,
     description: normalizeText(node.description) || null,
@@ -166,7 +180,11 @@ function toCompleteRecipeInput(node: Record<string, unknown>): RecipeInput | nul
   };
 }
 
-export function extractRecipeFromJsonLd({ html }: { html: string }): RecipeInput | null {
+export function extractRecipeFromJsonLd({
+  html,
+}: {
+  html: string;
+}): RecipeInput | null {
   const blocks = parseJsonLdBlocks(html);
 
   for (const block of blocks) {

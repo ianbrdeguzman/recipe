@@ -23,7 +23,9 @@ export async function fetchWebpage({
     });
 
     if (!response.ok) {
-      throw new UpstreamFetchError(`Source URL responded with ${response.status}`);
+      throw new UpstreamFetchError(
+        `Source URL responded with ${response.status}`,
+      );
     }
 
     const html = (await response.text()).trim();

@@ -8,7 +8,10 @@ function toJinaReaderUrl(url: URL) {
 }
 
 function normalizeReaderContent(input: string) {
-  return input.replace(/\r\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+  return input
+    .replace(/\r\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 export async function fetchWithJina({

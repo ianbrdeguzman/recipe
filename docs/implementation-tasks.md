@@ -695,11 +695,11 @@ Create a page with:
 - Loading and error states are visible.
 
 #### Current status
-- Partially complete.
-- `src/app/(app)/recipes/import/page.tsx` no longer renders a placeholder.
-- The page now includes a styled draft UI with a URL input, import button, back-to-recipes action, loading-state placeholder area, error-state placeholder area, and manual-entry fallback link.
-- The page styling now matches the existing manual-entry recipe pages more closely.
-- Client-side submission behavior, real loading/error handling, and redirect-on-success wiring are still pending.
+- Implemented.
+- `src/app/(app)/recipes/import/page.tsx` now renders the real import page shell and mounts `src/components/import-recipe-form.tsx`.
+- The client form submits to `POST /api/recipes/import` via `src/lib/recipes/import/submit-import-recipe.ts`.
+- The page now shows real loading and error states, disables duplicate submits during import, and redirects to the imported recipe detail page on success.
+- The manual-entry fallback link and back-to-recipes navigation remain available.
 
 ---
 
@@ -1072,12 +1072,12 @@ Review all major flows and improve error copy for:
 ### Task 3.2: Add loading states to major async actions
 
 #### Current status
-- Partially complete already.
+- Mostly complete already.
 - Google sign-in action has a loading state in `src/components/signin-button.tsx` and now also handles unexpected client-side initiation failure inline.
 - Sign-out action has a loading state in `src/components/signout-button.tsx` and now also handles unexpected client-side failure inline.
 - Recipe create and edit now share loading-state handling in `src/components/recipe-form.tsx`.
 - Recipe delete now has a loading state in `src/components/delete-recipe-button.tsx`.
-- Loading states for recipe import are still pending.
+- Recipe import submit now has loading-state handling in `src/components/import-recipe-form.tsx`.
 
 #### Objective
 Make the UI feel responsive and prevent duplicate actions.
