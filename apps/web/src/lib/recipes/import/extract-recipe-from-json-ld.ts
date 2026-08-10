@@ -168,7 +168,6 @@ function toCompleteRecipeInput(
     return null;
   }
 
-  console.log(">>> PASS JSONLD");
   return {
     title,
     description: normalizeText(node.description) || null,
