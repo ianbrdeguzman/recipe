@@ -1,34 +1,154 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --input-foreground: #171717;
-  --input-border: #d4d4d8;
-  --input-placeholder: #71717a;
+  color-scheme: light;
+
+  --background: #f7f8fa;
+  --foreground: #111827;
+
+  --card: #ffffff;
+  --card-foreground: #111827;
+
+  --popover: #ffffff;
+  --popover-foreground: #111827;
+
+  --primary: #2f9e6f;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f1f4f7;
+  --secondary-foreground: #111827;
+
+  --muted: #f1f4f7;
+  --muted-foreground: #6b7280;
+
+  --accent: #e7f6ef;
+  --accent-foreground: #216f50;
+
+  --destructive: #c24141;
+  --destructive-foreground: #ffffff;
+
+  --border: #e3e8ee;
+  --input: #cdd6e0;
+  --ring: #2f9e6f;
+
+  --success: #1f8f5f;
+  --warning: #b7791f;
+  --info: #2563eb;
+
+  --chart-1: #2f9e6f;
+  --chart-2: #2f7e8a;
+  --chart-3: #d9a441;
+  --chart-4: #8fb7a3;
+  --chart-5: #7c8fa1;
+
+  --radius: 1rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 8px);
+
+  --input-foreground: #111827;
+  --input-border: var(--input);
+  --input-placeholder: #6b7280;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --input-foreground: #171717;
-    --input-border: #3f3f46;
-    --input-placeholder: #a1a1aa;
+    color-scheme: dark;
+
+    --background: #0f1720;
+    --foreground: #e5edf5;
+
+    --card: #111b26;
+    --card-foreground: #e5edf5;
+
+    --popover: #111b26;
+    --popover-foreground: #e5edf5;
+
+    --primary: #47b884;
+    --primary-foreground: #07140e;
+
+    --secondary: #16212d;
+    --secondary-foreground: #e5edf5;
+
+    --muted: #16212d;
+    --muted-foreground: #9dacbb;
+
+    --accent: #133124;
+    --accent-foreground: #b8ebd0;
+
+    --destructive: #d85b5b;
+    --destructive-foreground: #ffffff;
+
+    --border: #233243;
+    --input: #314457;
+    --ring: #47b884;
+
+    --success: #47b884;
+    --warning: #d2a24c;
+    --info: #60a5fa;
+
+    --chart-1: #47b884;
+    --chart-2: #59a8b4;
+    --chart-3: #d2a24c;
+    --chart-4: #9fd0b3;
+    --chart-5: #98a9bb;
+
+    --input-foreground: #e5edf5;
+    --input-border: var(--input);
+    --input-placeholder: #9dacbb;
   }
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  background: var(--background);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 input,
@@ -36,10 +156,16 @@ textarea,
 select {
   color: var(--input-foreground);
   border-color: var(--input-border);
+  background: var(--card);
 }
 
 input::placeholder,
 textarea::placeholder {
   color: var(--input-placeholder);
   opacity: 1;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary) 20%, white);
+  color: var(--foreground);
 }
