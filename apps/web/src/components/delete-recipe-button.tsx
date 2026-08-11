@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
+
 type DeleteRecipeButtonProps = {
   recipeId: string;
 };
@@ -52,22 +54,23 @@ export function DeleteRecipeButton({ recipeId }: DeleteRecipeButtonProps) {
 
   return (
     <div className="flex flex-col items-start gap-2">
-      <button
+      <Button
         type="button"
+        variant="outline"
         onClick={openModal}
         disabled={isDeleting}
-        className="rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive"
       >
         {isDeleting ? "Deleting..." : "Delete recipe"}
-      </button>
+      </Button>
       {isModalOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <h2 className="text-lg font-semibold text-zinc-900">
+          <div className="bg-card w-full max-w-md rounded-2xl p-6 shadow-xl">
+            <h2 className="text-foreground text-lg font-semibold">
               Delete recipe?
             </h2>
 
-            <p className="mt-2 text-sm text-zinc-600">
+            <p className="text-muted-foreground mt-2 text-sm">
               This action cannot be undone. This recipe will be permanently
               removed from your account.
             </p>
@@ -77,23 +80,23 @@ export function DeleteRecipeButton({ recipeId }: DeleteRecipeButtonProps) {
             ) : null}
 
             <div className="mt-6 flex justify-end gap-3">
-              <button
+              <Button
                 type="button"
+                variant="outline"
                 onClick={closeModal}
                 disabled={isDeleting}
-                className="rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Cancel
-              </button>
+              </Button>
 
-              <button
+              <Button
                 type="button"
+                variant="destructive"
                 onClick={handleDelete}
                 disabled={isDeleting}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isDeleting ? "Deleting..." : "Delete recipe"}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

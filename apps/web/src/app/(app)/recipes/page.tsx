@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { recipe } from "@/lib/db/schema";
@@ -39,47 +40,36 @@ export default async function RecipesPage() {
     <section className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-6 py-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-sm font-medium uppercase tracking-wide text-zinc-500">
+          <p className="text-muted-foreground text-sm font-medium uppercase tracking-wide">
             Recipe list
           </p>
-          <h1 className="text-3xl font-semibold text-zinc-900">Your recipes</h1>
-          <p className="mt-2 max-w-2xl text-base text-zinc-600">
+          <h1 className="text-foreground text-3xl font-semibold">Your recipes</h1>
+          <p className="text-muted-foreground mt-2 max-w-2xl text-base">
             Browse your saved recipes or add a new one.
           </p>
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Link
-            href="/recipes/new"
-            className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white"
-          >
-            Create recipe
-          </Link>
-          <Link
-            href="/recipes/import"
-            className="rounded-md border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900"
-          >
-            Import from URL
-          </Link>
+          <Button asChild>
+            <Link href="/recipes/new">Create recipe</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/recipes/import">Import from URL</Link>
+          </Button>
         </div>
       </div>
 
       {recipes.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-zinc-300 bg-white p-8">
-          <h2 className="text-xl font-semibold text-zinc-900">
-            No recipes yet
-          </h2>
-          <p className="mt-2 text-zinc-600">
+        <div className="bg-card border-border rounded-2xl border border-dashed p-8">
+          <h2 className="text-foreground text-xl font-semibold">No recipes yet</h2>
+          <p className="text-muted-foreground mt-2">
             You haven&apos;t saved any recipes yet. Start by creating one
             manually.
           </p>
           <div className="mt-6">
-            <Link
-              href="/recipes/new"
-              className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white"
-            >
-              Create your first recipe
-            </Link>
+            <Button asChild>
+              <Link href="/recipes/new">Create your first recipe</Link>
+            </Button>
           </div>
         </div>
       ) : (
@@ -88,27 +78,27 @@ export default async function RecipesPage() {
             <li key={item.id}>
               <Link
                 href={`/recipes/${item.id}`}
-                className="block rounded-2xl border border-zinc-200 bg-white p-5 transition hover:border-zinc-300 hover:shadow-sm"
+                className="bg-card border-border hover:border-ring/50 block rounded-2xl border p-5 transition hover:shadow-sm"
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
-                    <h2 className="text-lg font-semibold text-zinc-900">
+                    <h2 className="text-foreground text-lg font-semibold">
                       {item.title}
                     </h2>
 
                     {item.description ? (
-                      <p className="mt-1 line-clamp-2 text-sm text-zinc-600">
+                      <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
                         {item.description}
                       </p>
                     ) : null}
                   </div>
 
-                  <span className="shrink-0 rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700">
+                  <span className="bg-secondary text-secondary-foreground shrink-0 rounded-full px-3 py-1 text-xs font-medium">
                     {item.sourceType === "url" ? "Imported" : "Manual"}
                   </span>
                 </div>
 
-                <div className="mt-4 flex flex-wrap gap-3 text-sm text-zinc-500">
+                <div className="text-muted-foreground mt-4 flex flex-wrap gap-3 text-sm">
                   {item.servings ? <span>Serves {item.servings}</span> : null}
                   {item.prepTimeMinutes ? (
                     <span>Prep {item.prepTimeMinutes} min</span>

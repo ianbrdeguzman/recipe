@@ -3,10 +3,11 @@ import { notFound, redirect } from "next/navigation";
 import { headers } from "next/headers";
 import Link from "next/link";
 
+import { DeleteRecipeButton } from "@/components/delete-recipe-button";
+import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { recipe } from "@/lib/db/schema";
-import { DeleteRecipeButton } from "@/components/delete-recipe-button";
 
 async function getRecipeForCurrentUser(recipeId: string) {
   const session = await auth.api.getSession({
@@ -41,68 +42,65 @@ export default async function RecipeDetailPage({
         <div>
           <Link
             href="/recipes"
-            className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
+            className="text-muted-foreground hover:text-foreground text-sm font-medium"
           >
             ← Back to recipes
           </Link>
 
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700">
+            <span className="bg-secondary text-secondary-foreground rounded-full px-3 py-1 text-xs font-medium">
               {selectedRecipe.sourceType === "url" ? "Imported" : "Manual"}
             </span>
 
             {selectedRecipe.servings ? (
-              <span className="text-sm text-zinc-500">
+              <span className="text-muted-foreground text-sm">
                 Serves {selectedRecipe.servings}
               </span>
             ) : null}
 
             {selectedRecipe.prepTimeMinutes ? (
-              <span className="text-sm text-zinc-500">
+              <span className="text-muted-foreground text-sm">
                 Prep {selectedRecipe.prepTimeMinutes} min
               </span>
             ) : null}
 
             {selectedRecipe.cookTimeMinutes ? (
-              <span className="text-sm text-zinc-500">
+              <span className="text-muted-foreground text-sm">
                 Cook {selectedRecipe.cookTimeMinutes} min
               </span>
             ) : null}
           </div>
 
-          <h1 className="mt-4 text-3xl font-semibold text-zinc-900">
+          <h1 className="text-foreground mt-4 text-3xl font-semibold">
             {selectedRecipe.title}
           </h1>
 
           {selectedRecipe.description ? (
-            <p className="mt-3 max-w-2xl text-base text-zinc-600">
+            <p className="text-muted-foreground mt-3 max-w-2xl text-base">
               {selectedRecipe.description}
             </p>
           ) : null}
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Link
-            href={`/recipes/${selectedRecipe.id}/edit`}
-            className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white"
-          >
-            Edit recipe
-          </Link>
+          <Button asChild>
+            <Link href={`/recipes/${selectedRecipe.id}/edit`}>Edit recipe</Link>
+          </Button>
 
           <DeleteRecipeButton recipeId={selectedRecipe.id} />
         </div>
       </div>
 
       {selectedRecipe.sourceUrl ? (
-        <div className="rounded-2xl border border-zinc-200 bg-white p-5">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+        <div className="bg-card border-border rounded-2xl border p-5">
+          <h2 className="text-muted-foreground text-sm font-semibold uppercase tracking-wide">
             Source
           </h2>
           <a
             href={selectedRecipe.sourceUrl}
             target="_blank"
             rel="noreferrer"
-            className="mt-2 block break-all text-sm text-zinc-900 underline underline-offset-4"
+            className="text-foreground mt-2 block break-all text-sm underline underline-offset-4"
           >
             {selectedRecipe.sourceUrl}
           </a>
@@ -110,9 +108,9 @@ export default async function RecipeDetailPage({
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <section className="rounded-2xl border border-zinc-200 bg-white p-6">
-          <h2 className="text-xl font-semibold text-zinc-900">Ingredients</h2>
-          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-zinc-700">
+        <section className="bg-card border-border rounded-2xl border p-6">
+          <h2 className="text-foreground text-xl font-semibold">Ingredients</h2>
+          <ul className="text-foreground mt-4 list-disc space-y-2 pl-5 text-sm">
             {selectedRecipe.ingredients.map((ingredient, index) => (
               <li key={`${selectedRecipe.id}-ingredient-${index}`}>
                 {ingredient}
@@ -121,9 +119,9 @@ export default async function RecipeDetailPage({
           </ul>
         </section>
 
-        <section className="rounded-2xl border border-zinc-200 bg-white p-6">
-          <h2 className="text-xl font-semibold text-zinc-900">Instructions</h2>
-          <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm text-zinc-700">
+        <section className="bg-card border-border rounded-2xl border p-6">
+          <h2 className="text-foreground text-xl font-semibold">Instructions</h2>
+          <ol className="text-foreground mt-4 list-decimal space-y-3 pl-5 text-sm">
             {selectedRecipe.instructions.map((instruction, index) => (
               <li key={`${selectedRecipe.id}-instruction-${index}`}>
                 {instruction}

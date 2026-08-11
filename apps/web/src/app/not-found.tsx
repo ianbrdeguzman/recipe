@@ -1,25 +1,24 @@
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
+
 export default function NotFound() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-50 px-6 py-16 text-zinc-900">
+    <main className="bg-background text-foreground flex min-h-screen items-center justify-center px-6 py-16">
       <div className="w-full max-w-md text-center">
-        <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
+        <p className="text-muted-foreground text-sm font-medium uppercase tracking-[0.2em]">
           404
         </p>
         <h1 className="mt-4 text-4xl font-semibold tracking-tight">
           Page not found
         </h1>
-        <p className="mt-4 text-base text-zinc-600">
+        <p className="text-muted-foreground mt-4 text-base">
           The page you’re looking for doesn’t exist or may have been moved.
         </p>
         <div className="mt-8 flex items-center justify-center gap-3">
-          <Link
-            href="/"
-            className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
-          >
-            Go home
-          </Link>
+          <Button asChild>
+            <Link href="/">Go home</Link>
+          </Button>
         </div>
       </div>
     </main>

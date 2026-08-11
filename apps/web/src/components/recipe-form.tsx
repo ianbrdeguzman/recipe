@@ -4,6 +4,11 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+
 const recipeMutationErrorResponseSchema = z.object({
   error: z.string(),
   fieldErrors: z.record(z.string(), z.array(z.string())).optional(),
@@ -209,16 +214,15 @@ export function RecipeForm({ mode, recipeId, initialValues }: RecipeFormProps) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <div className="grid gap-2">
-        <label htmlFor="title" className="text-sm font-medium text-zinc-900">
+        <Label htmlFor="title" className="text-foreground">
           Title
-        </label>
-        <input
+        </Label>
+        <Input
           id="title"
           name="title"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           required
-          className="rounded-md border border-zinc-300 px-3 py-2 text-sm"
         />
         {errors.title ? (
           <p className="text-sm text-red-600">{errors.title[0]}</p>
@@ -226,19 +230,15 @@ export function RecipeForm({ mode, recipeId, initialValues }: RecipeFormProps) {
       </div>
 
       <div className="grid gap-2">
-        <label
-          htmlFor="description"
-          className="text-sm font-medium text-zinc-900"
-        >
+        <Label htmlFor="description" className="text-foreground">
           Description
-        </label>
-        <textarea
+        </Label>
+        <Textarea
           id="description"
           name="description"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           rows={4}
-          className="rounded-md border border-zinc-300 px-3 py-2 text-sm"
         />
         {errors.description ? (
           <p className="text-sm text-red-600">{errors.description[0]}</p>
@@ -247,56 +247,44 @@ export function RecipeForm({ mode, recipeId, initialValues }: RecipeFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="grid gap-2">
-          <label
-            htmlFor="servings"
-            className="text-sm font-medium text-zinc-900"
-          >
+          <Label htmlFor="servings" className="text-foreground">
             Servings
-          </label>
-          <input
+          </Label>
+          <Input
             id="servings"
             name="servings"
             type="number"
             min="1"
             value={servings}
             onChange={(event) => setServings(event.target.value)}
-            className="rounded-md border border-zinc-300 px-3 py-2 text-sm"
           />
         </div>
 
         <div className="grid gap-2">
-          <label
-            htmlFor="prepTimeMinutes"
-            className="text-sm font-medium text-zinc-900"
-          >
+          <Label htmlFor="prepTimeMinutes" className="text-foreground">
             Prep time
-          </label>
-          <input
+          </Label>
+          <Input
             id="prepTimeMinutes"
             name="prepTimeMinutes"
             type="number"
             min="1"
             value={prepTimeMinutes}
             onChange={(event) => setPrepTimeMinutes(event.target.value)}
-            className="rounded-md border border-zinc-300 px-3 py-2 text-sm"
           />
         </div>
 
         <div className="grid gap-2">
-          <label
-            htmlFor="cookTimeMinutes"
-            className="text-sm font-medium text-zinc-900"
-          >
+          <Label htmlFor="cookTimeMinutes" className="text-foreground">
             Cook time
-          </label>
-          <input
+          </Label>
+          <Input
             id="cookTimeMinutes"
             name="cookTimeMinutes"
             type="number"
             min="1"
             value={cookTimeMinutes}
             onChange={(event) => setCookTimeMinutes(event.target.value)}
-            className="rounded-md border border-zinc-300 px-3 py-2 text-sm"
           />
         </div>
         {errors.servings ? (
@@ -311,34 +299,34 @@ export function RecipeForm({ mode, recipeId, initialValues }: RecipeFormProps) {
       </div>
 
       <div className="grid gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-zinc-900">Ingredients</h2>
-          <button
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-foreground text-lg font-semibold">Ingredients</h2>
+          <Button
             type="button"
+            variant="outline"
             onClick={() => addListItem(setIngredients)}
-            className="rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium"
           >
             Add ingredient
-          </button>
+          </Button>
         </div>
 
         {ingredients.map((ingredient, index) => (
           <div key={index} className="flex gap-2">
-            <input
+            <Input
               value={ingredient}
               onChange={(event) =>
                 updateListItem(setIngredients, index, event.target.value)
               }
-              className="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm"
+              className="flex-1"
               placeholder={`Ingredient ${index + 1}`}
             />
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={() => removeListItem(setIngredients, index)}
-              className="rounded-md border border-zinc-300 px-3 py-2 text-sm"
             >
               Remove
-            </button>
+            </Button>
           </div>
         ))}
 
@@ -348,35 +336,36 @@ export function RecipeForm({ mode, recipeId, initialValues }: RecipeFormProps) {
       </div>
 
       <div className="grid gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-zinc-900">Instructions</h2>
-          <button
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-foreground text-lg font-semibold">Instructions</h2>
+          <Button
             type="button"
+            variant="outline"
             onClick={() => addListItem(setInstructions)}
-            className="rounded-md border border-zinc-300 px-3 py-2 text-sm font-medium"
           >
             Add step
-          </button>
+          </Button>
         </div>
 
         {instructions.map((instruction, index) => (
           <div key={index} className="flex gap-2">
-            <textarea
+            <Textarea
               value={instruction}
               onChange={(event) =>
                 updateListItem(setInstructions, index, event.target.value)
               }
               rows={3}
-              className="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm"
+              className="flex-1"
               placeholder={`Step ${index + 1}`}
             />
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={() => removeListItem(setInstructions, index)}
-              className="self-start rounded-md border border-zinc-300 px-3 py-2 text-sm"
+              className="self-start"
             >
               Remove
-            </button>
+            </Button>
           </div>
         ))}
 
@@ -388,21 +377,13 @@ export function RecipeForm({ mode, recipeId, initialValues }: RecipeFormProps) {
       {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
 
       <div className="flex gap-3">
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
-        >
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Saving..." : buttonLabel}
-        </button>
+        </Button>
 
-        <button
-          type="button"
-          onClick={() => router.push(cancelHref)}
-          className="rounded-md border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-900"
-        >
+        <Button type="button" variant="outline" onClick={() => router.push(cancelHref)}>
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );

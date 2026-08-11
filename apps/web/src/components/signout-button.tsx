@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth/client";
 
 export function SignOutButton() {
@@ -27,13 +28,9 @@ export function SignOutButton() {
 
   return (
     <div className="space-y-2">
-      <button
-        className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white"
-        disabled={loading}
-        onClick={signOut}
-      >
+      <Button disabled={loading} onClick={signOut}>
         {loading ? "Signing out..." : "Sign out"}
-      </button>
+      </Button>
 
       {error ? (
         <p className="text-sm text-red-700">

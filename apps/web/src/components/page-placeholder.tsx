@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
+
 type Action = {
   href: string;
   label: string;
@@ -20,26 +22,22 @@ export function PagePlaceholder({
 }: PagePlaceholderProps) {
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-10">
-      <div className="rounded-2xl border border-dashed border-zinc-300 bg-white p-8">
+      <div className="bg-card border-border rounded-2xl border border-dashed p-8">
         {eyebrow ? (
-          <p className="mb-2 text-sm font-medium uppercase tracking-wide text-zinc-500">
+          <p className="text-muted-foreground mb-2 text-sm font-medium uppercase tracking-wide">
             {eyebrow}
           </p>
         ) : null}
 
-        <h1 className="text-3xl font-semibold text-zinc-900">{title}</h1>
-        <p className="mt-3 max-w-2xl text-base text-zinc-600">{description}</p>
+        <h1 className="text-foreground text-3xl font-semibold">{title}</h1>
+        <p className="text-muted-foreground mt-3 max-w-2xl text-base">{description}</p>
 
         {actions.length > 0 ? (
           <div className="mt-6 flex flex-wrap gap-3">
             {actions.map((action) => (
-              <Link
-                key={action.href}
-                href={action.href}
-                className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white"
-              >
-                {action.label}
-              </Link>
+              <Button key={action.href} asChild>
+                <Link href={action.href}>{action.label}</Link>
+              </Button>
             ))}
           </div>
         ) : null}

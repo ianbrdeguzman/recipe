@@ -20,7 +20,7 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="bg-background min-h-screen">
       <AppNav userName={session.user.name ?? session.user.email} />
       {children}
     </div>

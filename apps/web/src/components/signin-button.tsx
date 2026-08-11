@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth/client";
 
 export function SignInButton() {
@@ -27,13 +28,9 @@ export function SignInButton() {
 
   return (
     <div className="space-y-2">
-      <button
-        className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white"
-        disabled={loading}
-        onClick={signIn}
-      >
+      <Button disabled={loading} onClick={signIn}>
         {loading ? "Signing in..." : "Continue with Google"}
-      </button>
+      </Button>
 
       {error ? (
         <p className="text-sm text-red-700">
