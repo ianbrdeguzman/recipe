@@ -19,6 +19,16 @@ describe("reconstructUrlFromSlug", () => {
     ).toBe("https://cafedelites.com/best-fluffy-pancakes");
   });
 
+  it("decodes an encoded scheme segment from the browser path", () => {
+    expect(
+      reconstructUrlFromSlug([
+        "https%3A",
+        "cafedelites.com",
+        "best-fluffy-pancakes",
+      ]),
+    ).toBe("https://cafedelites.com/best-fluffy-pancakes");
+  });
+
   it("drops a trailing slash represented by an empty final segment", () => {
     expect(
       reconstructUrlFromSlug([

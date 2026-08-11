@@ -1,5 +1,13 @@
 const SUPPORTED_SCHEMES = new Set(["http:", "https:"]);
 
+function decodePathSegment(segment: string) {
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return segment;
+  }
+}
+
 export function reconstructUrlFromSlug(
   slug: string[] | undefined,
 ): string | null {
@@ -7,7 +15,8 @@ export function reconstructUrlFromSlug(
     return null;
   }
 
-  const [scheme, rawHost, ...rawPath] = slug;
+  const decodedSlug = slug.map(decodePathSegment);
+  const [scheme, rawHost, ...rawPath] = decodedSlug;
 
   if (!SUPPORTED_SCHEMES.has(scheme)) {
     return null;
