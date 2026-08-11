@@ -11,10 +11,14 @@ import { submitImportRecipe } from "@/lib/recipes/import/submit-import-recipe";
 
 type FieldErrors = Partial<Record<"url", string[]>>;
 
-export function ImportRecipeForm() {
+type ImportRecipeFormProps = {
+  initialUrl?: string;
+};
+
+export function ImportRecipeForm({ initialUrl = "" }: ImportRecipeFormProps) {
   const router = useRouter();
 
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState(initialUrl);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
