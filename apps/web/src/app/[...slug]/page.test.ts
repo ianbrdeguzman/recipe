@@ -1,4 +1,3 @@
-import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const notFoundError = new Error("NEXT_NOT_FOUND");
@@ -94,7 +93,7 @@ describe("CatchAllImportPage", () => {
     });
   });
 
-  it("renders manual recovery actions when the import fails", async () => {
+  it("rethrows the import error when the import fails", async () => {
     vi.mocked(reconstructUrlFromSlug).mockReturnValue(
       "https://example.com/pancakes",
     );
@@ -103,15 +102,10 @@ describe("CatchAllImportPage", () => {
     } as never);
     vi.mocked(importRecipeFromUrl).mockRejectedValue(new Error("Import failed"));
 
-    const page = await CatchAllImportPage({
-      params: Promise.resolve({ slug: ["https:", "example.com"] }),
-    } as PageProps<"/[...slug]">);
-
-    const html = renderToStaticMarkup(page);
-
-    expect(html).toContain("We couldn&#x27;t import this recipe");
-    expect(html).toContain('href="/recipes/import"');
-    expect(html).toContain('href="/recipes/new"');
-    expect(html).not.toContain("Recipe URL");
+    await expect(
+      CatchAllImportPage({
+        params: Promise.resolve({ slug: ["https:", "example.com"] }),
+      } as PageProps<"/[...slug]">),
+    ).rejects.toThrow("Import failed");
   });
 });
