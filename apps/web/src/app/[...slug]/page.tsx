@@ -6,10 +6,9 @@ import { reconstructUrlFromSlug } from "@/lib/recipes/import/reconstruct-url-fro
 
 export default async function CatchAllImportPage({
   params,
-}: {
-  params: Promise<{ slug?: string[] }>;
-}) {
+}: PageProps<"/[...slug]">) {
   const { slug } = await params;
+
   const initialUrl = reconstructUrlFromSlug(slug);
 
   if (!initialUrl) {
