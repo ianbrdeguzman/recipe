@@ -14,6 +14,7 @@ const recipeExtractionResponseFormat = {
     required: [
       "title",
       "description",
+      "imageUrl",
       "servings",
       "prepTimeMinutes",
       "cookTimeMinutes",
@@ -23,6 +24,7 @@ const recipeExtractionResponseFormat = {
     properties: {
       title: { type: "string" },
       description: { type: ["string", "null"] },
+      imageUrl: { type: ["string", "null"] },
       servings: { type: ["integer", "null"] },
       prepTimeMinutes: { type: ["integer", "null"] },
       cookTimeMinutes: { type: ["integer", "null"] },

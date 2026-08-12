@@ -116,6 +116,7 @@ export const importedRecipe = pgTable(
     originalSourceUrl: text("original_source_url").notNull(),
     title: text("title").notNull(),
     description: text("description"),
+    imageUrl: text("image_url"),
     servings: integer("servings"),
     prepTimeMinutes: integer("prep_time_minutes"),
     cookTimeMinutes: integer("cook_time_minutes"),
@@ -152,6 +153,7 @@ export const recipe = pgTable(
     sourceUrl: text("source_url"),
     title: text("title").notNull(),
     description: text("description"),
+    imageUrl: text("image_url"),
     servings: integer("servings"),
     prepTimeMinutes: integer("prep_time_minutes"),
     cookTimeMinutes: integer("cook_time_minutes"),
@@ -170,9 +172,12 @@ export const recipe = pgTable(
   ],
 );
 
-export const importedRecipeRelations = relations(importedRecipe, ({ many }) => ({
-  recipes: many(recipe),
-}));
+export const importedRecipeRelations = relations(
+  importedRecipe,
+  ({ many }) => ({
+    recipes: many(recipe),
+  }),
+);
 
 export const recipeRelations = relations(recipe, ({ one }) => ({
   user: one(user, {

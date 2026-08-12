@@ -28,6 +28,7 @@ describe("extractRecipe", () => {
       output_parsed: {
         title: "Pancakes",
         description: "Fluffy",
+        imageUrl: null,
         servings: 4,
         prepTimeMinutes: 10,
         cookTimeMinutes: 15,
@@ -62,6 +63,7 @@ describe("extractRecipe", () => {
               required: [
                 "title",
                 "description",
+                "imageUrl",
                 "servings",
                 "prepTimeMinutes",
                 "cookTimeMinutes",
@@ -94,6 +96,11 @@ describe("extractRecipe", () => {
     parseMock.mockResolvedValue({
       output_parsed: {
         title: "Pancakes",
+        description: null,
+        imageUrl: null,
+        servings: null,
+        prepTimeMinutes: null,
+        cookTimeMinutes: null,
         ingredients: ["1 cup flour"],
         instructions: [],
       },

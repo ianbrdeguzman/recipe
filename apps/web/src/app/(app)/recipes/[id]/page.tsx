@@ -120,7 +120,9 @@ export default async function RecipeDetailPage({
         </section>
 
         <section className="bg-card border-border rounded-2xl border p-6">
-          <h2 className="text-foreground text-xl font-semibold">Instructions</h2>
+          <h2 className="text-foreground text-xl font-semibold">
+            Instructions
+          </h2>
           <ol className="text-foreground mt-4 list-decimal space-y-3 pl-5 text-sm">
             {selectedRecipe.instructions.map((instruction, index) => (
               <li key={`${selectedRecipe.id}-instruction-${index}`}>

@@ -11,6 +11,7 @@ function toRecipeFields(input: RecipeInput) {
   return {
     title: input.title.trim(),
     description: input.description?.trim() || null,
+    imageUrl: input.imageUrl?.trim() || null,
     servings: input.servings ?? null,
     prepTimeMinutes: input.prepTimeMinutes ?? null,
     cookTimeMinutes: input.cookTimeMinutes ?? null,
@@ -110,6 +111,7 @@ export async function createUserRecipeFromImportedRecipe({
         sourceUrl: normalizedSourceUrl,
         title: canonicalRecipe.title,
         description: canonicalRecipe.description,
+        imageUrl: canonicalRecipe.imageUrl,
         servings: canonicalRecipe.servings,
         prepTimeMinutes: canonicalRecipe.prepTimeMinutes,
         cookTimeMinutes: canonicalRecipe.cookTimeMinutes,

@@ -8,6 +8,7 @@ const nonEmptyListItem = z
 export const recipeInputSchema = z.object({
   title: z.string().trim().min(1, "Title is required."),
   description: z.string().nullable().optional(),
+  imageUrl: z.string().nullable().optional(),
   servings: z.number().int().positive().nullable().optional(),
   prepTimeMinutes: z.number().int().positive().nullable().optional(),
   cookTimeMinutes: z.number().int().positive().nullable().optional(),
