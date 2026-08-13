@@ -49,31 +49,41 @@ describe("findImportedRecipeByNormalizedUrl", () => {
 });
 
 describe("createImportedRecipe", () => {
-  it("stores a canonical cached row", async () => {
+  it("stores a canonical cached row with the provided imageKey", async () => {
     const returning = vi.fn().mockResolvedValue([
       {
         id: "imported-1",
         normalizedSourceUrl: "https://example.com/recipe",
+        imageKey: null,
       },
     ]);
     const values = vi.fn().mockReturnValue({ returning });
     insertMock.mockReturnValue({ values });
 
     const result = await createImportedRecipe({
+      importedRecipeId: "imported-1",
       normalizedSourceUrl: "https://example.com/recipe",
       originalSourceUrl: "https://EXAMPLE.com/recipe/",
       input: {
         title: "Pancakes",
         description: null,
-        imageUrl: null,
+        imageUrl: "https://cdn.example.com/pancakes.jpg",
         servings: 4,
         prepTimeMinutes: 10,
         cookTimeMinutes: 15,
         ingredients: ["1 cup flour"],
         instructions: ["Mix ingredients"],
       },
+      imageKey: "imported/imported-1.webp",
     });
 
+    expect(values).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: "imported-1",
+        imageUrl: "https://cdn.example.com/pancakes.jpg",
+        imageKey: "imported/imported-1.webp",
+      }),
+    );
     expect(result.normalizedSourceUrl).toBe("https://example.com/recipe");
   });
 });
@@ -89,7 +99,8 @@ describe("createUserRecipeFromImportedRecipe", () => {
         sourceType: "url",
         sourceUrl: "https://example.com/recipe",
         title: "Pancakes",
-        imageUrl: null,
+        imageUrl: "https://cdn.example.com/pancakes.jpg",
+        imageKey: "imported/imported-1.webp",
         ingredients: ["1 cup flour"],
         instructions: ["Mix ingredients"],
       },
@@ -106,7 +117,8 @@ describe("createUserRecipeFromImportedRecipe", () => {
         originalSourceUrl: "https://EXAMPLE.com/recipe/",
         title: "Pancakes",
         description: null,
-        imageUrl: null,
+        imageUrl: "https://cdn.example.com/pancakes.jpg",
+        imageKey: "imported/imported-1.webp",
         servings: 4,
         prepTimeMinutes: 10,
         cookTimeMinutes: 15,
@@ -117,6 +129,12 @@ describe("createUserRecipeFromImportedRecipe", () => {
       },
     });
 
+    expect(values).toHaveBeenCalledWith(
+      expect.objectContaining({
+        imageUrl: "https://cdn.example.com/pancakes.jpg",
+        imageKey: "imported/imported-1.webp",
+      }),
+    );
     expect(result.importedRecipeId).toBe("imported-1");
     expect(result.sourceUrl).toBe("https://example.com/recipe");
   });
@@ -131,7 +149,8 @@ describe("createUserRecipeFromImportedRecipe", () => {
       sourceUrl: "https://example.com/recipe",
       title: "Pancakes",
       description: null,
-      imageUrl: null,
+      imageUrl: "https://cdn.example.com/pancakes.jpg",
+      imageKey: "imported/imported-1.webp",
       servings: 4,
       prepTimeMinutes: 10,
       cookTimeMinutes: 15,
@@ -163,7 +182,8 @@ describe("createUserRecipeFromImportedRecipe", () => {
         originalSourceUrl: "https://example.com/recipe/",
         title: "Pancakes",
         description: null,
-        imageUrl: null,
+        imageUrl: "https://cdn.example.com/pancakes.jpg",
+        imageKey: "imported/imported-1.webp",
         servings: 4,
         prepTimeMinutes: 10,
         cookTimeMinutes: 15,

@@ -7,6 +7,7 @@ import {
 } from "./imported-recipe-store";
 import { webpageImporter } from "./importers/webpage-importer";
 import { normalizeRecipeSourceUrl } from "./normalize-source-url";
+import { storeImportedRecipeImage } from "./recipe-image-storage";
 import { detectImportSourceType } from "./source-type";
 
 export async function importRecipeFromUrl({
@@ -43,10 +44,19 @@ export async function importRecipeFromUrl({
   const sourceType = detectImportSourceType(parsedUrl);
   const importer = getRecipeImporter({ sourceType, webpageImporter });
   const input = await importer({ url: parsedUrl, sourceType });
+  const importedRecipeId = crypto.randomUUID();
+  const imageKey = input.imageUrl
+    ? await storeImportedRecipeImage({
+        importedRecipeId,
+        imageUrl: input.imageUrl,
+      })
+    : null;
   const canonicalRecipe = await createImportedRecipe({
+    importedRecipeId,
     normalizedSourceUrl,
     originalSourceUrl: parsedUrl.toString(),
     input,
+    imageKey,
   });
 
   return createUserRecipeFromImportedRecipe({

@@ -48,6 +48,7 @@ describe("POST /api/recipes/import", () => {
       title: "Pancakes",
       description: null,
       imageUrl: null,
+      imageKey: null,
       servings: null,
       prepTimeMinutes: null,
       cookTimeMinutes: null,
@@ -65,7 +66,10 @@ describe("POST /api/recipes/import", () => {
     );
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toMatchObject({ id: "recipe-1" });
+    await expect(response.json()).resolves.toMatchObject({
+      id: "recipe-1",
+      imageKey: null,
+    });
   });
 
   it("returns an existing saved recipe when the user imports the same normalized URL again", async () => {
@@ -82,6 +86,7 @@ describe("POST /api/recipes/import", () => {
       title: "Pancakes",
       description: null,
       imageUrl: null,
+      imageKey: "imported/imported-1.webp",
       servings: 4,
       prepTimeMinutes: 10,
       cookTimeMinutes: 15,
@@ -102,6 +107,7 @@ describe("POST /api/recipes/import", () => {
     await expect(response.json()).resolves.toMatchObject({
       id: "recipe-1",
       normalizedSourceUrl: "https://example.com/recipe",
+      imageKey: "imported/imported-1.webp",
     });
   });
 });

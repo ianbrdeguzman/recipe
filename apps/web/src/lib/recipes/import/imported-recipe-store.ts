@@ -7,19 +7,6 @@ import type { RecipeInput } from "@/lib/recipes/schema";
 import { RecipePersistenceError } from "./errors";
 import type { CanonicalImportedRecipe, ImportedRecipe } from "./types";
 
-function toRecipeFields(input: RecipeInput) {
-  return {
-    title: input.title.trim(),
-    description: input.description?.trim() || null,
-    imageUrl: input.imageUrl?.trim() || null,
-    servings: input.servings ?? null,
-    prepTimeMinutes: input.prepTimeMinutes ?? null,
-    cookTimeMinutes: input.cookTimeMinutes ?? null,
-    ingredients: input.ingredients.map((ingredient) => ingredient.trim()),
-    instructions: input.instructions.map((instruction) => instruction.trim()),
-  };
-}
-
 function isUniqueViolation(error: unknown) {
   return (
     typeof error === "object" &&
@@ -63,22 +50,36 @@ export async function findImportedRecipeByNormalizedUrl({
 }
 
 export async function createImportedRecipe({
+  importedRecipeId,
   normalizedSourceUrl,
   originalSourceUrl,
   input,
+  imageKey,
 }: {
+  importedRecipeId: string;
   normalizedSourceUrl: string;
   originalSourceUrl: string;
   input: RecipeInput;
+  imageKey: string | null;
 }): Promise<CanonicalImportedRecipe> {
   try {
     const [createdImportedRecipe] = await db
       .insert(importedRecipe)
       .values({
-        id: crypto.randomUUID(),
+        id: importedRecipeId,
         normalizedSourceUrl,
         originalSourceUrl,
-        ...toRecipeFields(input),
+        title: input.title.trim(),
+        description: input.description?.trim() || null,
+        imageUrl: input.imageUrl?.trim() || null,
+        imageKey,
+        servings: input.servings ?? null,
+        prepTimeMinutes: input.prepTimeMinutes ?? null,
+        cookTimeMinutes: input.cookTimeMinutes ?? null,
+        ingredients: input.ingredients.map((ingredient) => ingredient.trim()),
+        instructions: input.instructions.map((instruction) =>
+          instruction.trim(),
+        ),
       })
       .returning();
 
@@ -112,6 +113,7 @@ export async function createUserRecipeFromImportedRecipe({
         title: canonicalRecipe.title,
         description: canonicalRecipe.description,
         imageUrl: canonicalRecipe.imageUrl,
+        imageKey: canonicalRecipe.imageKey,
         servings: canonicalRecipe.servings,
         prepTimeMinutes: canonicalRecipe.prepTimeMinutes,
         cookTimeMinutes: canonicalRecipe.cookTimeMinutes,
