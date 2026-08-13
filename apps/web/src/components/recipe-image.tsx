@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { getRecipeImagePublicUrl } from "@/lib/recipes/import/recipe-image-storage";
+import { getRecipeImagePublicUrl } from "@/lib/recipes/recipe-image-url";
 
 const variantStyles = {
   thumbnail: {

@@ -6,7 +6,7 @@ vi.mock("next/image", () => ({
   default: (props: Record<string, unknown>) => createElement("img", props),
 }));
 
-vi.mock("@/lib/recipes/import/recipe-image-storage", () => ({
+vi.mock("@/lib/recipes/recipe-image-url", () => ({
   getRecipeImagePublicUrl: vi.fn((imageKey: string | null | undefined) =>
     imageKey
       ? `https://project.supabase.co/storage/v1/object/public/recipe-images/${imageKey}`

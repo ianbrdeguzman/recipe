@@ -8,16 +8,6 @@ function getSupabaseUrl() {
   );
 }
 
-function getStorageObjectPublicUrl(imageKey: string) {
-  const supabaseUrl = getSupabaseUrl();
-
-  if (!supabaseUrl) {
-    return null;
-  }
-
-  return `${supabaseUrl}/storage/v1/object/public/${RECIPE_IMAGES_BUCKET}/${imageKey}`;
-}
-
 function getImportedRecipeImageKey(importedRecipeId: string) {
   return `imported/${importedRecipeId}.webp`;
 }
@@ -65,14 +55,6 @@ async function uploadImageToSupabase({
   );
 
   return response.ok;
-}
-
-export function getRecipeImagePublicUrl(imageKey: string | null | undefined) {
-  if (!imageKey) {
-    return null;
-  }
-
-  return getStorageObjectPublicUrl(imageKey);
 }
 
 export async function storeImportedRecipeImage({

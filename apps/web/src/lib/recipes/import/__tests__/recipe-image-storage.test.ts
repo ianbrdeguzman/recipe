@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { getRecipeImagePublicUrl } from "@/lib/recipes/recipe-image-url";
+
 const sharpMock = vi.fn();
 
 vi.mock("sharp", () => ({
@@ -15,11 +17,7 @@ describe("recipe image storage", () => {
     process.env.SUPABASE_SERVICE_ROLE_KEY = "service-role-key";
   });
 
-  it("derives the public URL from the imageKey", async () => {
-    const { getRecipeImagePublicUrl } = await import(
-      "@/lib/recipes/import/recipe-image-storage"
-    );
-
+  it("derives the public URL from the imageKey", () => {
     expect(getRecipeImagePublicUrl("imported/imported-1.webp")).toBe(
       "https://project.supabase.co/storage/v1/object/public/recipe-images/imported/imported-1.webp",
     );
