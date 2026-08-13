@@ -3,10 +3,11 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
+import { RecipeForm } from "@/components/recipe-form";
+import { RecipeImage } from "@/components/recipe-image";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { recipe } from "@/lib/db/schema";
-import { RecipeForm } from "@/components/recipe-form";
 
 async function getRecipeForCurrentUser(recipeId: string) {
   const session = await auth.api.getSession({
@@ -59,6 +60,12 @@ export default async function EditRecipePage({
           </Link>
         </div>
       </div>
+
+      <RecipeImage
+        imageKey={selectedRecipe.imageKey}
+        title={selectedRecipe.title}
+        variant="preview"
+      />
 
       <div className="bg-card border-border rounded-2xl border p-6 shadow-sm">
         <RecipeForm

@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 
 import { DeleteRecipeButton } from "@/components/delete-recipe-button";
+import { RecipeImage } from "@/components/recipe-image";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -90,6 +91,12 @@ export default async function RecipeDetailPage({
           <DeleteRecipeButton recipeId={selectedRecipe.id} />
         </div>
       </div>
+
+      <RecipeImage
+        imageKey={selectedRecipe.imageKey}
+        title={selectedRecipe.title}
+        variant="hero"
+      />
 
       {selectedRecipe.sourceUrl ? (
         <div className="bg-card border-border rounded-2xl border p-5">

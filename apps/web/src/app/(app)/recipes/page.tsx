@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { RecipeImage } from "@/components/recipe-image";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -26,6 +27,7 @@ async function getRecipesForCurrentUser() {
       prepTimeMinutes: recipe.prepTimeMinutes,
       cookTimeMinutes: recipe.cookTimeMinutes,
       sourceType: recipe.sourceType,
+      imageKey: recipe.imageKey,
       updatedAt: recipe.updatedAt,
     })
     .from(recipe)
@@ -80,22 +82,30 @@ export default async function RecipesPage() {
                 href={`/recipes/${item.id}`}
                 className="bg-card border-border hover:border-ring/50 block rounded-2xl border p-5 transition hover:shadow-sm"
               >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="min-w-0">
-                    <h2 className="text-foreground text-lg font-semibold">
-                      {item.title}
-                    </h2>
+                <div className="flex gap-4">
+                  <RecipeImage
+                    imageKey={item.imageKey}
+                    title={item.title}
+                    variant="thumbnail"
+                  />
 
-                    {item.description ? (
-                      <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
-                        {item.description}
-                      </p>
-                    ) : null}
+                  <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
+                      <h2 className="text-foreground text-lg font-semibold">
+                        {item.title}
+                      </h2>
+
+                      {item.description ? (
+                        <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
+                          {item.description}
+                        </p>
+                      ) : null}
+                    </div>
+
+                    <span className="bg-secondary text-secondary-foreground shrink-0 rounded-full px-3 py-1 text-xs font-medium">
+                      {item.sourceType === "url" ? "Imported" : "Manual"}
+                    </span>
                   </div>
-
-                  <span className="bg-secondary text-secondary-foreground shrink-0 rounded-full px-3 py-1 text-xs font-medium">
-                    {item.sourceType === "url" ? "Imported" : "Manual"}
-                  </span>
                 </div>
 
                 <div className="text-muted-foreground mt-4 flex flex-wrap gap-3 text-sm">
